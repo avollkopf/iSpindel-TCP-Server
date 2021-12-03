@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.4deb2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3308
--- Erstellungszeit: 27. Aug 2021 um 23:34
--- Server-Version: 10.5.11-MariaDB
--- PHP-Version: 7.3.7
+-- Host: localhost:3306
+-- Generation Time: Dec 01, 2021 at 11:02 PM
+-- Server version: 10.5.12-MariaDB-0+deb11u1
+-- PHP Version: 7.4.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `iSpindle`
+-- Database: `iSpindle`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `Settings`
+-- Table structure for table `Settings`
 --
 
 CREATE TABLE `Settings` (
@@ -39,7 +39,7 @@ CREATE TABLE `Settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
 --
--- Daten für Tabelle `Settings`
+-- Dumping data for table `Settings`
 --
 
 INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Description_DE`, `Description_EN`, `Description_IT`, `DeviceName`) VALUES
@@ -59,7 +59,7 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('BREWSPY', 'SPY_USE_ISPINDLE_TOKEN', '0', '0', 'Verwendung des ISpindle Tokens zur Weiterleitung', 'Use token from iSpindle for data forwarding', 'Utilizzare il token sul iSpindle per l\'inoltro dati', '_DEFAULT'),
 ('CRAFTBEERPI3', 'CRAFTBEERPI3ADDR', '0.0.0.0:5000', '0.0.0.0:5000', 'IPADRESSE:PORT des Craftbeerpi3 servers', 'IPADDRESS:PORT of the Craftbeerpi3 servers', 'INDIRIZZO_IP:PORTA del server Craftbeerpi3', '_DEFAULT'),
 ('CRAFTBEERPI3', 'CRAFTBEERPI3_SEND_ANGLE', '1', '1', 'Falls 1: Weiterleitung des Winkels anstelle der berechneten Gravity. CBPI3 kann dann gravity berechnen', 'If 1: raw angle will be send instead of gravity. Polynom inside craftbeerpi3 can be used for gravity calculation', 'Se 1: viene inviato il valore del angolo invece della densità.Il polinomio inserito in craftbeerpi3 può calcolare la densità', '_DEFAULT'),
-('CRAFTBEERPI3', 'ENABLE_CRAFTBEERPI3', '1', '1', 'Weiterleitung an CraftbeerPI3', 'Enable forwarding to CraftbeerPi3', 'Inoltro a CraftbeerPI3', '_DEFAULT'),
+('CRAFTBEERPI3', 'ENABLE_CRAFTBEERPI3', '0', '1', 'Weiterleitung an CraftbeerPI3', 'Enable forwarding to CraftbeerPi3', 'Inoltro a CraftbeerPI3', '_DEFAULT'),
 ('CSV', 'DATETIME', '1', '1', 'Ein Wert von 1 schreibt einen Excel kompatiblen Zeitstempel in das CSV file', 'Leave this at 1 to include Excel compatible timestamp in CSV', 'Se lasciato a 1 viene incluso un timestamp compatibile nel file CSV', 'GLOBAL'),
 ('CSV', 'DELIMITER', ';', ';', 'Trennzeichen, dass fuer CSV File genutzt wird', 'Delimiter used for CSV file', 'Separatore usato nel file CSV', 'GLOBAL'),
 ('CSV', 'ENABLE_CSV', '0', '0', 'Schreiben der Daten in CSV File (1: ja 0: nein)', 'Write Data to CSV file (1: yes 0: no)', 'Scrivere dati in un file CSV (1: si 0: no) ', '_DEFAULT'),
@@ -109,7 +109,7 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('FORWARD', 'FORWARDADDR', '0.0.0.0', '0.0.0.0', 'IP Adresse des anderen Servers', 'IP Adress of the other server', 'Indirizzo IP dell\'altro server', '_DEFAULT'),
 ('FORWARD', 'FORWARDPORT', '9501', '9501', 'Port des anderen Servers', 'Port of the remote server', 'Porta del server remoto', '_DEFAULT'),
 ('GENERAL', 'HOST', '0.0.0.0', '0.0.0.0', 'Erlaubter IP Bereich. 0.0.0.0 ermöglicht Verbindungen von überall', 'Allowed IP range. Leave at 0.0.0.0 to allow connections from anywhere', 'Gamma IP concessa. lasciare a 0.0.0.0 per permettere la connessione da ovunque', 'GLOBAL'),
-('GENERAL', 'LANGUAGE', 'DE', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
+('GENERAL', 'LANGUAGE', 'EN', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
 ('GENERAL', 'PORT', '9501', '9501', 'Port zur Kommunikation zwischen Spindel und TCP Server (muss auch in der Spindel hinterlegt sein)', 'TCP Port to listen to (to be used in iSpindle config as well)', 'Porta TCP di communicazione (da impostare anche nella configurazione iSpindle)', 'GLOBAL'),
 ('GENERAL', 'SHOWSUMMARY', '1', '1', 'Anzeige von Device in der Übersicht auf der Hauptseite. (0: nein 1: ja)', 'Show device in summary on main page (0: no 1: yes)', 'Visualizzazione del dispositivo nella panoramica sulla pagina principale. (0: no 1: sì)', '_DEFAULT'),
 ('GRAINCONNECT', 'ENABLE_GRAINCONNECT', '0', '0', 'Weiterleitung an Grainfather Connect (muss für jede Spindel individuell angelegt werden)', 'Forward to Grainfather Connect (must be cofigured for individual spindles)', 'Inoltra a Grainfather Connect (deve essere configurato per i singoli spindle)', '_DEFAULT'),
@@ -125,6 +125,9 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('LAYOUT', 'COLORSCHEME_green', '', '', 'Farbschema Hopfen', 'Colorscheme Hops', 'Colorscheme Hops', 'GLOBAL'),
 ('LAYOUT', 'COLORSCHEME_red', '', '', 'Farbschema Rot', 'Colorscheme Red', 'Colorscheme Red', 'GLOBAL'),
 ('LAYOUT', 'COLORSCHEME_wheat', '', '', 'Farbschema Malz', 'Colorscheme Grain', 'Colorscheme Grain', 'GLOBAL'),
+('LITTLEBOCK', 'ENABLE_LITTLEBOCK', '0', '0', 'Weiterleitung der Daten an Little Bock (1: an 0: aus)', '1 to enable output to Little Bock', '1 per abilitare l\'inoltro a Little Bock ', '_DEFAULT'),
+('LITTLEBOCK', 'LITTLEBOCKADDRESS', 'www.littlebock.fr', 'www.littlebock.fr', 'IP Address of the Little Bock server', 'IP Address of the Little Bock server', NULL, '_DEFAULT'),
+('LITTLEBOCK', 'LITTLEBOCKURL', '/api/log/ispindle/XXX/YYY', '/api/log/ispindle/XXX/YYY', 'IP Address of the Little Bock server', 'url for specific iSpindle', NULL, '_DEFAULT'),
 ('REMOTECONFIG', 'ENABLE_REMOTECONFIG', '0', '0', 'Bei 1: Konfiguration wird vom TCP Server an die Spindel während eines Datentransfers gesendet (noch in der Testung)', 'If enabled, config from TCP server will be send to Spindle during data transfer once (still under testing)', 'Se abilitato, vengono scritti i dati di configurazione sulla Spindel durante un trasferimento (in fase di testing)', '_DEFAULT'),
 ('UBIDOTS', 'ENABLE_UBIDOTS', '0', '0', 'Weiterleitung der Daten an Ubidots (1: an 0: aus)', '1 to enable output to ubidots', '1 per abilitare l\'inoltro a ubidots ', '_DEFAULT'),
 ('UBIDOTS', 'UBI_TOKEN', 'my_token', 'my_token', 'UBIDOTS Token. Siehe Anleitung oder ubidots.com', 'global ubidots token, see manual or ubidots.com', 'Token ubidots vedi istruzioni o ubidots.com', '_DEFAULT'),
@@ -132,11 +135,11 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('VERSION', '', '006', '006', NULL, NULL, NULL, 'GLOBAL');
 
 --
--- Indizes der exportierten Tabellen
+-- Indexes for dumped tables
 --
 
 --
--- Indizes für die Tabelle `Settings`
+-- Indexes for table `Settings`
 --
 ALTER TABLE `Settings`
   ADD PRIMARY KEY (`Section`,`Parameter`,`value`,`DeviceName`);
