@@ -219,6 +219,11 @@ INFLUXDBNAME = get_config_from_sql('INFLUXDB', 'INFLUXDBNAME')
 INFLUXDBUSERNAME = get_config_from_sql('INFLUXDB', 'INFLUXDBUSERNAME')
 INFLUXDBPASSWD = get_config_from_sql('INFLUXDB', 'INFLUXDBPASSWD')
 
+# Forward to little bock
+LITTLEBOCK = int(get_config_from_sql('LITTLEBOCK', 'ENABLE_LITTLEBOCK'))
+LITTLEBOCKADDR = get_config_from_sql('LITTLEBOCK', 'LITTLEBOCKADDRESS')
+LITTLEBOCKURL = get_config_from_sql('LITTLEBOCK', 'LITTLEBOCKURL')
+
 # iSpindle Remote Config?
 # If this is enabled, we'll send iSpindle config JSON as TCP reply.
 # Before using this, make sure your database is up-to-date. See README and INSTALL.
@@ -457,7 +462,7 @@ def handler(clientsock, addr):
         BREWFATHERPORT = int(get_config_from_sql('BREWFATHER', 'BREWFATHERPORT', spindle_name))
         BREWFATHERSUFFIX = get_config_from_sql('BREWFATHER', 'BREWFATHERSUFFIX', spindle_name)
 
-        # InfluxDB
+       # InfluxDB
         INFLUXDB = int(get_config_from_sql('INFLUXDB', 'ENABLE_INFLUXDB', spindle_name))
         INFLUXDBADDR = get_config_from_sql('INFLUXDB', 'INFLUXDBADDR', spindle_name)
         INFLUXDBPORT = int(get_config_from_sql('INFLUXDB', 'INFLUXDBPORT', spindle_name))
@@ -465,6 +470,11 @@ def handler(clientsock, addr):
         INFLUXDBUSERNAME = get_config_from_sql('INFLUXDB', 'INFLUXDBUSERNAME', spindle_name)
         INFLUXDBPASSWD = get_config_from_sql('INFLUXDB', 'INFLUXDBPASSWD', spindle_name)
 
+        # Forward to little bock
+        LITTLEBOCK = int(get_config_from_sql('LITTLEBOCK', 'ENABLE_LITTLEBOCK',spindle_name))
+        LITTLEBOCKADDR = get_config_from_sql('LITTLEBOCK', 'LITTLEBOCKADDRESS',spindle_name)
+        LITTLEBOCKURL = get_config_from_sql('LITTLEBOCK', 'LITTLEBOCKURL',spindle_name)
+        
         #Grainfather Connect
         GRAINCONNECT = int(get_config_from_sql('GRAINCONNECT', 'ENABLE_GRAINCONNECT', spindle_name))
         GRAIN_SG = int(get_config_from_sql('GRAINCONNECT', 'ENABLE_SG', spindle_name))
@@ -896,6 +906,26 @@ def handler(clientsock, addr):
                         dbgprint(repr(addr) + ' - HTTP Status code received: ' + str(req.status))
             except Exception as e:
                 dbgprint(repr(addr) + ' Brewfather Error: ' + str(e))
+
+        if LITTLEBOCK and gauge == 0:
+            try:
+                        dbgprint(repr(addr) + ' - sending to littlebock')
+                        import urllib3
+                        outdata = {
+                            'temperature': temperature,
+                            'battery': battery,
+                            'gravity': gravity
+                        }
+                        out = json.dumps(outdata).encode('utf-8')
+                        dbgprint(repr(addr) + ' - sending: ' + out.decode('utf-8'))
+                        url = 'http://' + LITTLEBOCKADDR + LITTLEBOCKURL 
+                        dbgprint(repr(addr) + ' to : ' + url)
+                        http = urllib3.PoolManager()
+                        req = http.request('POST',url,body=out, headers={'Content-Type': 'application/json', 'User-Agent': spindle_name})
+                        dbgprint(repr(addr) + ' - HTTP Status code received: ' + str(req.status))
+            except Exception as e:
+                dbgprint(repr(addr) + ' Littlebock Error: ' + str(e))
+
 
         readConfig()
 

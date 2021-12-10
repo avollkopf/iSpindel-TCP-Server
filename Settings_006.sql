@@ -1,7 +1,8 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.4deb2
 -- https://www.phpmyadmin.net/
 --
+
 -- Host: 127.0.0.1:3308
 -- Erstellungszeit: 11. Dez 2021 um 00:29
 -- Server-Version: 10.5.11-MariaDB
@@ -18,13 +19,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `iSpindle`
+-- Database: `iSpindle`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `Settings`
+-- Table structure for table `Settings`
 --
 
 CREATE TABLE `Settings` (
@@ -39,7 +40,7 @@ CREATE TABLE `Settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
 --
--- Daten für Tabelle `Settings`
+-- Dumping data for table `Settings`
 --
 
 INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Description_DE`, `Description_EN`, `Description_IT`, `DeviceName`) VALUES
@@ -109,7 +110,7 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('FORWARD', 'FORWARDADDR', '0.0.0.0', '0.0.0.0', 'IP Adresse des anderen Servers', 'IP Adress of the other server', 'Indirizzo IP dell\'altro server', '_DEFAULT'),
 ('FORWARD', 'FORWARDPORT', '9501', '9501', 'Port des anderen Servers', 'Port of the remote server', 'Porta del server remoto', '_DEFAULT'),
 ('GENERAL', 'HOST', '0.0.0.0', '0.0.0.0', 'Erlaubter IP Bereich. 0.0.0.0 ermöglicht Verbindungen von überall', 'Allowed IP range. Leave at 0.0.0.0 to allow connections from anywhere', 'Gamma IP concessa. lasciare a 0.0.0.0 per permettere la connessione da ovunque', 'GLOBAL'),
-('GENERAL', 'LANGUAGE', 'DE', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
+('GENERAL', 'LANGUAGE', 'EN', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
 ('GENERAL', 'PORT', '9501', '9501', 'Port zur Kommunikation zwischen Spindel und TCP Server (muss auch in der Spindel hinterlegt sein)', 'TCP Port to listen to (to be used in iSpindle config as well)', 'Porta TCP di communicazione (da impostare anche nella configurazione iSpindle)', 'GLOBAL'),
 ('GENERAL', 'SHOWSUMMARY', '1', '1', 'Anzeige von Device in der Übersicht auf der Hauptseite. (0: nein 1: ja)', 'Show device in summary on main page (0: no 1: yes)', 'Visualizzazione del dispositivo nella panoramica sulla pagina principale. (0: no 1: sì)', '_DEFAULT'),
 ('GRAINCONNECT', 'ENABLE_GRAINCONNECT', '0', '0', 'Weiterleitung an Grainfather Connect (muss für jede Spindel individuell angelegt werden)', 'Forward to Grainfather Connect (must be cofigured for individual spindles)', 'Inoltra a Grainfather Connect (deve essere configurato per i singoli spindle)', '_DEFAULT'),
@@ -125,6 +126,9 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('LAYOUT', 'COLORSCHEME_green', '', '', 'Farbschema Hopfen', 'Colorscheme Hops', 'Colorscheme Hops', 'GLOBAL'),
 ('LAYOUT', 'COLORSCHEME_red', '', '', 'Farbschema Rot', 'Colorscheme Red', 'Colorscheme Red', 'GLOBAL'),
 ('LAYOUT', 'COLORSCHEME_wheat', '', '', 'Farbschema Malz', 'Colorscheme Grain', 'Colorscheme Grain', 'GLOBAL'),
+('LITTLEBOCK', 'ENABLE_LITTLEBOCK', '0', '0', 'Weiterleitung der Daten an Little Bock (1: an 0: aus)', '1 to enable output to Little Bock', '1 per abilitare l\'inoltro a Little Bock ', '_DEFAULT'),
+('LITTLEBOCK', 'LITTLEBOCKADDRESS', 'www.littlebock.fr', 'www.littlebock.fr', 'IP Address of the Little Bock server', 'IP Address of the Little Bock server', NULL, '_DEFAULT'),
+('LITTLEBOCK', 'LITTLEBOCKURL', '/api/log/ispindle/XXX/YYY', '/api/log/ispindle/XXX/YYY', 'IP Address of the Little Bock server', 'url for specific iSpindle', NULL, '_DEFAULT'),
 ('REMOTECONFIG', 'ENABLE_REMOTECONFIG', '0', '0', 'Bei 1: Konfiguration wird vom TCP Server an die Spindel während eines Datentransfers gesendet (noch in der Testung)', 'If enabled, config from TCP server will be send to Spindle during data transfer once (still under testing)', 'Se abilitato, vengono scritti i dati di configurazione sulla Spindel durante un trasferimento (in fase di testing)', '_DEFAULT'),
 ('UBIDOTS', 'ENABLE_UBIDOTS', '0', '0', 'Weiterleitung der Daten an Ubidots (1: an 0: aus)', '1 to enable output to ubidots', '1 per abilitare l\'inoltro a ubidots ', '_DEFAULT'),
 ('UBIDOTS', 'UBI_TOKEN', 'my_token', 'my_token', 'UBIDOTS Token. Siehe Anleitung oder ubidots.com', 'global ubidots token, see manual or ubidots.com', 'Token ubidots vedi istruzioni o ubidots.com', '_DEFAULT'),
@@ -132,11 +136,11 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('VERSION', '', '006', '006', NULL, NULL, NULL, 'GLOBAL');
 
 --
--- Indizes der exportierten Tabellen
+-- Indexes for dumped tables
 --
 
 --
--- Indizes für die Tabelle `Settings`
+-- Indexes for table `Settings`
 --
 ALTER TABLE `Settings`
   ADD PRIMARY KEY (`Section`,`Parameter`,`value`,`DeviceName`);
