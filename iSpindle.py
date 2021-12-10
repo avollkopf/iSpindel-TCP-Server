@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Version 3.4
 # Added RSSI to cbpi forwarding
+# Added forwarding to Littebock (thanks to François-Xavier / NoWing31)
 #
 # Version 3.3
 # Added support for SG transfer to grainconnect
