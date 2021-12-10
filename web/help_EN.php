@@ -829,6 +829,7 @@ If you e.g. has a number of devices for which no email should be sent, you can g
   <h2>About</h2>
   <p>The initial server scripts have been developed by Tozzi. Further development and porting to Python3 was done by mr_hyde</p>
   <p>A discussion about this software can be followed in the German Hobbybrauerforum: https://hobbybrauer.de/forum/viewtopic.php?f=58&t=12869</p>
+  <p>The lates version of the server can ba found  <a href="https://github.com/avollkopf/iSpindel-TCP-Server">here</a>.</p>
   <p>The server is using the following ressources:</p>
   <p><a href="https://www.highcharts.com">Highcharts for the Diagrams</a></p>
   <p><a href="https://github.com/PHPMailer/PHPMailer">PHPMailer for the mailfunctions</a></p>

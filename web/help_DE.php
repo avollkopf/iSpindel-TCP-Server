@@ -877,6 +877,7 @@ Wenn man z.B. eine ganze Reihe von Devices hat, für die keine Email versendet w
   <h2>About</h2>
   <p>Der Server wurde von Tozzi initiiert und entwickelt. Die Weiterentwicklung und Portierung auf python3 wurde von mrhyde vorgenommen.</p>
   <p>Eine Diskussion über den Server kann im Hybbybrauerforum verfolgt werden: https://hobbybrauer.de/forum/viewtopic.php?f=58&t=12869</p>
+  <p>Die neueste Version des Servers kann <a href="https://github.com/avollkopf/iSpindel-TCP-Server">hier</a> gefunden werden.</p>
   <p>Der Server verwendet folgende Resourcen zur Unterstützung:</p>
   <p><a href="https://www.highcharts.com">Highcharts für die Diagramdarstellung</a></p>
   <p><a href="https://github.com/PHPMailer/PHPMailer">PHPMailer für die Mailfunktionen</a></p>
