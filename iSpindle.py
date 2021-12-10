@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+# Version 3.4
+# Added RSSI to cbpi forwarding
+#
 # Version 3.3
 # Added support for SG transfer to grainconnect
-# Improvement in handling GC_URL in case of tailing whitespace characters
 #
 # Version 3.2
 # Added support for alternative Fermenter temperature from CBPiv4 iSpindle plugin
@@ -33,9 +35,6 @@
 # Change of config data handling. ini files will be stored in config directory and user can create iSpindle_config.ini in this directory.
 # If personalized config file is not existing, values from iSpindle_default.ini will be pulled. 
 # Change preserves personalized config data during update
-#
-# 1.6.1.1
-# Added Exception Handlers for CSV and SQL Recipe Lookup
 #
 # 1.6.1.1
 # Added Exception Handlers for CSV and SQL Recipe Lookup
@@ -529,6 +528,7 @@ def handler(clientsock, addr):
                     'angle': angle if CRAFTBEERPI3_SEND_ANGLE else gravity,
                     'temperature': temperature,
                     'battery': battery,
+                    'RSSI': rssi,
                 }
                 out = json.dumps(outdata).encode('utf-8')
                 dbgprint(repr(addr) + ' - sending: ' + out.decode('utf-8'))

@@ -1,10 +1,10 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3308
--- Erstellungszeit: 28. Dez 2020 um 23:52
--- Server-Version: 10.4.12-MariaDB
+-- Erstellungszeit: 11. Dez 2021 um 00:24
+-- Server-Version: 10.5.11-MariaDB
 -- PHP-Version: 7.3.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `iSpindle2`
+-- Datenbank: `iSpindle`
 --
 
 -- --------------------------------------------------------
@@ -135,7 +135,7 @@ INSERT INTO `Strings` (`File`, `Field`, `Description_DE`, `Description_EN`, `Des
 ('index', 'server_settings', 'TCP Server Settings Editieren', 'Edit TCP Server Settings', 'Modificare impostazioni server TCP'),
 ('index', 'settings_header', 'RasPySpindel Einstellungen', 'RasPySpindel Settings', 'RasPySpindel impostazioni'),
 ('index', 'show_archive', 'Archiv Laden', 'Load archive', 'Magazzino archivio'),
-('index', 'show_diagram', 'Diagram Anzeigen', 'Show Diagram', 'Visualizza diagramma'),
+('index', 'show_diagram', 'Diagramm anzeigen', 'Show Diagram', 'Visualizza diagramma'),
 ('index', 'upgrade_data_table', 'Upgrade der Datentabelle', 'Upgrade data table', 'Aggiornamento di Datentabelle'),
 ('index', 'upgrade_settings', 'Settings Tabelle durch neuste Version ersetzen', 'Replace Settings table with latest version', 'Sostituisci la tabella delle impostazioni con l\'ultima versione'),
 ('index', 'upgrade_strings', 'String Tabelle durch neuste Version ersetzen', 'Replace Strings table with latest version', 'Sostituisci la tabella delle stringhe con l\'ultima versione'),
@@ -203,7 +203,7 @@ INSERT INTO `Strings` (`File`, `Field`, `Description_DE`, `Description_EN`, `Des
 ('svg_ma', 'timetext', 'Temperatur und scheinbarer Vergärungsgrad der letzten', 'Temperature and extract of the last ', 'Tenperatura e densità delle ultime'),
 ('svg_ma', 'timetext_reset', 'Temperatur und scheinbarer Vergärungsgrad seit dem letzten Reset: ', 'Temperature and apparent attenuation since last reset: ', 'Temperatura e attenuazione apparente dall\'ultimo reset: '),
 ('svg_ma', 'x_axis', 'Datum / Uhrzeit', 'Date / Time', 'Data / Orario'),
-('version', '011', '', '', ''),
+('version', '012', '', '', ''),
 ('wifi', 'header', 'WiFi Empfangsqualität:', 'Wifi reception: ', 'Qualità della ricezione WiFi: ');
 
 --
