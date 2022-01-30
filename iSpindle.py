@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Version 3.5
+# Fixed InfluxDB for python3
+#
 # Version 3.4
 # Added RSSI to cbpi forwarding
 #
@@ -821,30 +824,39 @@ def handler(clientsock, addr):
         if INFLUXDB and gauge == 0:
             try:
                 dbgprint(repr(addr) + ' - forwarding to InfluxDB ' + INFLUXDBADDR)
-                import urllib2
+                import urllib3
                 import base64
                 outdata = {
                     'tilt': angle,
                     'temperature': temperature,
+                    'temp_units': temp_units,
                     'battery': battery,
                     'gravity': gravity,
                     'interval': interval,
                     'RSSI': rssi
                 }
-                out = 'measurements,source=' + spindle_name + ' ' +  ",".join("{}={}".format(k,v) for k,v in outdata.items())
+                out = ('measurements,source=' + spindle_name + ' ')
+                out_append=""
+                dbgprint(out)
+                for k,v in outdata.items():
+                   if k != "temp_units":
+                       dbgprint(out_append)
+                       out_append = out_append + ("{}={},").format(k,v)
+                   else:
+                       out_append = out_append + ("{}=\"{}\",").format(k,v)
+                out = out + out_append[:-1]
+#                out = 'measurements,source=' + spindle_name + ' ' +  ",".join("{}={}".format(k,v) for k,v in outdata.items())
                 dbgprint(repr(addr) + ' - sending: ' + out)
 
                 url = 'http://' + INFLUXDBADDR + ':' + str(INFLUXDBPORT) + '/write?db=' + INFLUXDBNAME
                 dbgprint(repr(addr) + ' to : ' + url)
-                req = urllib2.Request(url)
-                req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-                req.add_header('User-Agent', spindle_name)
-
-                base64string = base64.b64encode('%s:%s' % (INFLUXDBUSERNAME, INFLUXDBPASSWD))
-                req.add_header("Authorization", "Basic %s" % base64string)
-
-                response = urllib2.urlopen(req, out)
-                dbgprint(repr(addr) + ' - received: ' + response.read())
+                http = urllib3.PoolManager()
+                base64string = base64.b64encode(('%s:%s' % (INFLUXDBUSERNAME,INFLUXDBPASSWD)).encode())
+                dbgprint(base64string)
+                header = {'User-Agent': spindle_name, 'Content-Type': 'application/x-www-form-urlencoded','Authorization': 'Basic %s' % base64string.decode('utf-8')}
+                dbgprint(header)
+                req = http.request('POST',url, body=out, headers = header)
+                dbgprint(repr(addr) + ' - received: ' + str(req.status))
             except Exception as e:
                 dbgprint(repr(addr) + ' InfluxDB Error: ' + str(e))
 
