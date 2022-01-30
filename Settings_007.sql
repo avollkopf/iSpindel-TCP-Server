@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb5
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Jan 27, 2022 at 03:26 PM
--- Server version: 10.3.31-MariaDB-0+deb10u1
--- PHP Version: 7.3.31-1~deb10u1
+-- Host: 127.0.0.1:3308
+-- Erstellungszeit: 30. Jan 2022 um 17:45
+-- Server-Version: 10.5.11-MariaDB
+-- PHP-Version: 7.3.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -17,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `iSpindle`
+-- Datenbank: `iSpindle`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Settings`
+-- Tabellenstruktur für Tabelle `Settings`
 --
 
 CREATE TABLE `Settings` (
@@ -38,7 +39,7 @@ CREATE TABLE `Settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT;
 
 --
--- Dumping data for table `Settings`
+-- Daten für Tabelle `Settings`
 --
 
 INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Description_DE`, `Description_EN`, `Description_IT`, `DeviceName`) VALUES
@@ -82,22 +83,11 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('DIAGRAM', 'SVG_Y_AXIS_MIN', '0', '0', 'Min Wert für y-Achse des Vergärungsgrades', 'Min value for y-axis of the attenuation diagram', '', 'GLOBAL'),
 ('DIAGRAM', 'TEMPERATURE_Y_AXIS_MAX', '30', '30', 'Max Wert für y-Achse des Temperatur Diagrams', 'Max value for y-axis of the temperature diagram', '', 'GLOBAL'),
 ('DIAGRAM', 'TEMPERATURE_Y_AXIS_MIN', '-5', '-5', 'Min Wert für y-Achse des Temperatur Diagrams', 'Min value for y-axis of the temperature diagram', '', 'GLOBAL'),
-('EMAIL', 'ALARMDELTA', '1', '1', 'Limit für Delta Plato Alarm. Ist die Änderung der letzten 12 Stunden ist, als diese Wert wird ein email Alarm gesendet.', 'Limit for Delta Plato alarm. If change within past 12 hours becomes lower, Alarm will be sent.', 'Limite delta allarme plato. Se nelle ultime 12 ore la variazione e inferiore, viene inviata una mail.', '_DEFAULT'),
-('EMAIL', 'ALARMLOW', '4.5', '4.5', 'Gravity Limit (Plato) für Email Alarm (z.B. 4 -> Alarm, wenn Gravity unter 4 fällt)', 'Lower Gravity Limit for Email Alarm in case acutal gravity is below limit', 'Linite inferiore densità (plato) (p.es. 4 -> allarme quando densità scende al di sotto di quel valore) ', '_DEFAULT'),
-('EMAIL', 'ALARMSVG', '60', '60', 'Vergärungsgrad Limit (%) für Email Alarm (z.B. 60 Alarm, wenn SVG 60 Prozent erreicht)', 'Limit for Email Alarm of apparent attenuation (e.g. 60 raises an alarm once apparent attenuation reaches 60 percent)', 'Limite superiore allarme attenuazione apparente (p.es. 60 -> allarme quando viene raggiunto il 60 per cento)', '_DEFAULT'),
-('EMAIL', 'ENABLEALARMLOW', '1', '1', 'Sende email Alarm, wenn Gravity unter einen bestimmern Wert fällt (0:nein 1: ja)', 'Enable Alarm for low gravity', 'Abilita allarme in caso la densità scenda al di sotto di un valore impostato (0:no 1:si)', '_DEFAULT'),
-('EMAIL', 'ENABLEALARMSVG', '1', '1', 'Sende email Alarm, wenn Vergärungsgrad oberhalb eines bestimmern Werts liegt (0:nein 1: ja)', 'Enable Alarm for apparent attenuation above threshhold value (0:no 1:yes)', 'Abilita allarme in caso l\'attenuazione apparente superi un valore impostato (0:no 1:si)', '_DEFAULT'),
-('EMAIL', 'ENABLEDEBUG', '0', '0', 'Debug test email (0:nein 1-2: ja)', 'Debug test email (1-2: yes 0: no)', 'Email di test di debug (1-2: si 0: no)', 'GLOBAL'),
-('EMAIL', 'ENABLEMAIL', '1', '1', 'Aktiviere Email Funktion für Device (0:nein 1: ja)', 'Activate email function for device (1: yes 0: no)', 'Attiva la funzione Email per dispositivo (1: si 0: no)', '_DEFAULT'),
-('EMAIL', 'ENABLESTATUS', '1', '1', 'Sende tägliche Status Email (0:nein 1: ja)', 'Send daily status email (1: yes 0: no)', 'Abilita l\'Invio di una mail di stato giornaliera (1: si 0: no)', 'GLOBAL'),
-('EMAIL', 'ENABLE_ALARMDELTA', '0', '0', 'Alarm, wenn Plato Veränderung innerhalb der letzten 12 Stunden unter limit fällt (An: 1)', 'Alarm for delta plato (On: 1) If change of plato within past 12 hours falls below setting, email alarm will be sent', 'Abilita allarme se il delta plato scende al di sotto un valore impostato nelle ultime 12 ore.', '_DEFAULT'),
-('EMAIL', 'EXCLUDESTRING', 'XXX', 'XXX', 'Device Name mit Teilstring wird von Email Alarmen ausgeschlossen', 'Devicename with substring is excluded from Email alarms', 'Il nome devic con sottostringa è escluso dagli allarmi e-mail', 'GLOBAL'),
+('EMAIL', 'ENABLEMAIL', '1', '1', 'Aktiviere Email Funktion für Device (0:nein 1: ja)', 'Activate email function for device (1: yes 0: no)', 'Attiva la funzione Email per dispositivo (1: si 0: no)', 'GLOBAL'),
 ('EMAIL', 'FROMADDR', 'yourmail@gmail.com', 'yourmail@gmail.com', 'Email Adresse von der eine Nachricht versendet werden soll.', 'email, from which the ', 'Indirizzo email provenienza, inviato da ', 'GLOBAL'),
 ('EMAIL', 'PASSWD', 'yourpassword', 'yourpassword', 'SMTP Server Passwort', 'SMTP server password', 'Server SMTP password', 'GLOBAL'),
 ('EMAIL', 'SMTPPORT', '587', '587', 'SMTP Server Port (z.B. 587)', 'smpt server port', 'Porta SMTP server (p. es. 587)', 'GLOBAL'),
 ('EMAIL', 'SMTPSERVER', 'smtp.gmail.com', 'smtp.gmail.com', 'SMTP Server Adresse (z.B. smtp.gmail.com)', 'smtp server addresss', 'Indirizzo server SMTP', 'GLOBAL'),
-('EMAIL', 'TIMEFRAMESTATUS', '3', '3', 'Zeitraum der letzten Datenübermittlung in Tagen, wenn ein Statusalarm gesendet werden soll', 'Timeframe in days when last spindel data was send and should be displayed.', 'Periodo in giorni dall\'ultimo invio di una mail di allarme', '_DEFAULT'),
-('EMAIL', 'TIMESTATUS', '7', '7', 'Uhrzeit in vollen Stunden für tägliche Status Email (z.B. 6 fuer 6 Uhr morgens)', 'Set time for Status email around full hour. e.g. 6 means 6:00', 'Ora per l\'invio della mail di stato giornaliera p. es. 6 sono le 6:00', 'GLOBAL'),
 ('EMAIL', 'TOADDR', 'yourmail@gmail.com', 'yourmail@gmail.com', 'Email Adresse, an die eine Nachricht gesendet werden soll', 'email address to which the alarm email is sent', 'Indirizzo email a cui inviare la mail di stato/allarme', 'GLOBAL'),
 ('FERMENTRACK', 'ENABLE_FERMENTRACK', '0', '0', 'Weiterleitung der Daten an Fermentrack', 'Forward data to Fermentrack', 'Inoltro dati a Fermentrack', '_DEFAULT'),
 ('FERMENTRACK', 'FERMENTRACKADDR', '0.0.0.0', '0.0.0.0', 'IP Adresse des Fermentrack Servers', 'IP Address of the Fermentrack Server', 'Indirizzo IP del server Fermentrack', '_DEFAULT'),
@@ -108,15 +98,15 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('FORWARD', 'FORWARDADDR', '0.0.0.0', '0.0.0.0', 'IP Adresse des anderen Servers', 'IP Adress of the other server', 'Indirizzo IP dell\'altro server', '_DEFAULT'),
 ('FORWARD', 'FORWARDPORT', '9501', '9501', 'Port des anderen Servers', 'Port of the remote server', 'Porta del server remoto', '_DEFAULT'),
 ('GENERAL', 'HOST', '0.0.0.0', '0.0.0.0', 'Erlaubter IP Bereich. 0.0.0.0 ermöglicht Verbindungen von überall', 'Allowed IP range. Leave at 0.0.0.0 to allow connections from anywhere', 'Gamma IP concessa. lasciare a 0.0.0.0 per permettere la connessione da ovunque', 'GLOBAL'),
-('GENERAL', 'LANGUAGE', 'EN', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
-('GENERAL', 'PORT', '9501', '9501', 'Port zur Kommunikation zwischen Spindel und TCP Server (muss auch in der Spindel hinterlegt sein)', 'TCP Port to listen to (to be used in iSpindle config as well)', 'Porta TCP di communicazione (da impostare anche nella configurazione iSpindle)', 'GLOBAL'),
-('GENERAL', 'SHOWSUMMARY', '1', '1', 'Anzeige von Device in der Übersicht auf der Hauptseite. (0: nein 1: ja)', 'Show device in summary on main page (0: no 1: yes)', 'Visualizzazione del dispositivo nella panoramica sulla pagina principale. (0: no 1: sì)', '_DEFAULT'),
 ('GRAINCONNECT', 'ENABLE_GRAINCONNECT', '1', '0', 'Weiterleitung an Grainfather Connect (muss für jede Spindel individuell angelegt werden)', 'Forward to Grainfather Connect (must be cofigured for individual spindles)', 'Inoltra a Grainfather Connect (deve essere configurato per i singoli spindle)', '_DEFAULT'),
 ('GRAINCONNECT', 'ENABLE_SG', '1', '0', 'Weiterleitung als SG (1) anstelle von Plato (0) (muss für jede Spindel individuell angelegt werden)', 'Forward as SG (1) instead of Plato (0) (must be cofigured for individual spindles)', 'Avanti come SG (1) invece di Plato (0) (deve essere configurato per i singoli spindle)', '_DEFAULT'),
 ('GRAINCONNECT', 'GRAINCONNECT_INTERVAL', '900', '900', 'Grainfather Intervall zum Senden von Datenpaketen', 'Grainfather interval for sending data packages', 'Grainfather intervallo per l\'invio di pacchetti di dati', '_DEFAULT'),
 ('GRAINCONNECT', 'GRAINCONNECT_LASTSENT', '', '', 'Grainfather Zeitstempel des letzten gesendeten Datenpaketen', 'Grainfather timestamp of last package sent', 'Grainfather timestamp dell\'ultimo pacchetti di dati inviato', '_DEFAULT'),
 ('GRAINCONNECT', 'GRAINCONNECT_URL', '', '/URL', 'Grainfather \'Server URL\'', 'Grainfather \'Server URL\' (blank to use URLSLUG instead', 'Grainfather \'Server URL\'', '_DEFAULT'),
 ('GRAINCONNECT', 'GRAINCONNECT_URLSLUG', '', 'url-slug', 'Grainfather \'Server URL\' stück für /iot/[url-slug]/ispindel', 'Grainfather \'Server URL\' part for /iot/[url-slug]/ispindel', 'Grainfather \'Server URL\'', '_DEFAULT'),
+('GENERAL', 'LANGUAGE', 'DE', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
+('GENERAL', 'PORT', '9501', '9501', 'Port zur Kommunikation zwischen Spindel und TCP Server (muss auch in der Spindel hinterlegt sein)', 'TCP Port to listen to (to be used in iSpindle config as well)', 'Porta TCP di communicazione (da impostare anche nella configurazione iSpindle)', 'GLOBAL'),
+('GENERAL', 'SHOWSUMMARY', '1', '1', 'Anzeige von Device in der Übersicht auf der Hauptseite. (0: nein 1: ja)', 'Show device in summary on main page (0: no 1: yes)', 'Visualizzazione del dispositivo nella panoramica sulla pagina principale. (0: no 1: sì)', '_DEFAULT'),
 ('INFLUXDB', 'ENABLE_INFLUXDB', '0', '0', 'Weiterleitung an InfluxDB', 'Forward to InfluxDB', 'Inoltro a InfluxDB', '_DEFAULT'),
 ('INFLUXDB', 'INFLUXDBADDR', 'localhost', 'localhost', 'IP-Adresse/Name des InfluxDB-Servers', 'IP address/hostname of the InfluxDB Server', 'Indirizzo IP / nome del server InfluxDB', '_DEFAULT'),
 ('INFLUXDB', 'INFLUXDBNAME', 'spindeldaten', 'spindeldaten', 'Name der Datenbank innerhalb von InfluxDB', 'Name of the database inside InfluxDB', 'Nome del database all\'interno di InfluxDB', '_DEFAULT'),
@@ -130,21 +120,36 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('LITTLEBOCK', 'ENABLE_LITTLEBOCK', '0', '0', 'Weiterleitung der Daten an Little Bock (1: an 0: aus)', '1 to enable output to Little Bock', '1 per abilitare l\'inoltro a Little Bock ', '_DEFAULT'),
 ('LITTLEBOCK', 'LITTLEBOCKADDRESS', 'www.littlebock.fr', 'www.littlebock.fr', 'IP Address of the Little Bock server', 'IP Address of the Little Bock server', NULL, '_DEFAULT'),
 ('LITTLEBOCK', 'LITTLEBOCKURL', '/api/log/ispindle/XXX/YYY', '/api/log/ispindle/XXX/YYY', 'IP Address of the Little Bock server', 'url for specific iSpindle', NULL, '_DEFAULT'),
+('MESSAGING', 'ALARMDELTA', '1', '1', 'Limit für Delta Plato Alarm. Ist die Änderung der letzten 12 Stunden ist, als diese Wert wird ein Message Alarm gesendet.', 'Limit for Delta Plato alarm. If change within past 12 hours becomes lower, Alarm will be sent.', 'Limite delta allarme plato. Se nelle ultime 12 ore la variazione e inferiore, viene inviata una message.', '_DEFAULT'),
+('MESSAGING', 'ALARMLOW', '4.5', '4.5', 'Gravity Limit (Plato) für Message Alarm (z.B. 4 -> Alarm, wenn Gravity unter 4 fällt)', 'Lower Gravity Limit for message Alarm in case acutal gravity is below limit', 'Linite inferiore densità (plato) (p.es. 4 -> allarme quando densità scende al di sotto di quel valore) ', '_DEFAULT'),
+('MESSAGING', 'ALARMSVG', '60', '60', 'Vergärungsgrad Limit (%) für Message Alarm (z.B. 60 Alarm, wenn SVG 60 Prozent erreicht)', 'Limit for message Alarm of apparent attenuation (e.g. 60 raises an alarm once apparent attenuation reaches 60 percent)', 'Limite superiore allarme attenuazione apparente (p.es. 60 -> allarme quando viene raggiunto il 60 per cento)', '_DEFAULT'),
+('MESSAGING', 'ENABLEALARMLOW', '1', '1', 'Sende Message Alarm, wenn Gravity unter einen bestimmern Wert fällt (0:nein 1: ja)', 'Enable Alarm for low gravity', 'Abilita allarme in caso la densità scenda al di sotto di un valore impostato (0:no 1:si)', '_DEFAULT'),
+('MESSAGING', 'ENABLEALARMSVG', '1', '1', 'Sende message Alarm, wenn Vergärungsgrad oberhalb eines bestimmern Werts liegt (0:nein 1: ja)', 'Enable Alarm for apparent attenuation above threshhold value (0:no 1:yes)', 'Abilita allarme in caso l\'attenuazione apparente superi un valore impostato (0:no 1:si)', '_DEFAULT'),
+('MESSAGING', 'ENABLEMESSAGE', '1', '1', 'Aktiviere Message Funktion für Device (0:nein 1: ja)', 'Activate message function for device (1: yes 0: no)', 'Attiva la funzione message per dispositivo (1: si 0: no)', '_DEFAULT'),
+('MESSAGING', 'ENABLESTATUS', '0', '0', 'Sende tägliche Status Message (0:nein 1: ja))', 'Send daily status message (1: yes 0: no)', 'Abilita l\'Invio di una message di stato giornaliera (1: si 0: no)', 'GLOBAL'),
+('MESSAGING', 'ENABLE_ALARMDELTA', '0', '0', 'Alarm, wenn Plato Veränderung innerhalb der letzten 12 Stunden unter limit fällt (An: 1)', 'Alarm for delta plato (On: 1) If change of plato within past 12 hours falls below setting, email alarm will be sent', 'Abilita allarme se il delta plato scende al di sotto un valore impostato nelle ultime 12 ore.', '_DEFAULT'),
+('MESSAGING', 'EXCLUDESTRING', 'XXX', 'XXX', 'Device Name mit Teilstring wird von Message Alarmen ausgeschlossen', 'Devicename with substring is excluded from message alarms', 'Il nome devic con sottostringa è escluso dagli allarmi message', 'GLOBAL'),
+('MESSAGING', 'TIMEFRAMESTATUS', '3', '3', 'Zeitraum der letzten Datenübermittlung in Tagen, wenn ein Statusalarm gesendet werden soll.', 'Timeframe in days when last spindel data was send and should be displayed.', 'Periodo in giorni dall\\\'ultimo invio di una mail di allarme.', '_DEFAULT'),
+('MESSAGING', 'TIMESTATUS', '7', '7', 'Uhrzeit in vollen Stunden für tägliche Status Message (z.B. 6 fuer 6 Uhr morgens)', 'Set time for Status message around full hour. e.g. 6 means 6:00', 'Ora per l\'invio della message di stato giornaliera p. es. 6 sono le 6:00', 'GLOBAL'),
+('PUSHOVER', 'API_TOKEN', 'YOURTOKEN', 'YOURTOKEN', 'PushOver Service API Token', 'PushOver Service API Token', 'PushOver Service API Token', 'GLOBAL'),
+('PUSHOVER', 'ENABLEPUSHOVER', '0', '0', 'Aktiviere Push Message (0: nein, 1: ja)', 'Activate Push Message (0: no, 1: yes)', 'Activate Push Message (0: no, 1: yes)', 'GLOBAL'),
+('PUSHOVER', 'USER_KEY', 'YOURUSERKEY', 'YOURUSERKEY', 'PushOver Service User Key', 'PushOver Service User Key', 'PushOver Service User Key', 'GLOBAL'),
 ('REMOTECONFIG', 'ENABLE_REMOTECONFIG', '0', '0', 'Bei 1: Konfiguration wird vom TCP Server an die Spindel während eines Datentransfers gesendet (noch in der Testung)', 'If enabled, config from TCP server will be send to Spindle during data transfer once (still under testing)', 'Se abilitato, vengono scritti i dati di configurazione sulla Spindel durante un trasferimento (in fase di testing)', '_DEFAULT'),
 ('UBIDOTS', 'ENABLE_UBIDOTS', '0', '0', 'Weiterleitung der Daten an Ubidots (1: an 0: aus)', '1 to enable output to ubidots', '1 per abilitare l\'inoltro a ubidots ', '_DEFAULT'),
 ('UBIDOTS', 'UBI_TOKEN', 'my_token', 'my_token', 'UBIDOTS Token. Siehe Anleitung oder ubidots.com', 'global ubidots token, see manual or ubidots.com', 'Token ubidots vedi istruzioni o ubidots.com', '_DEFAULT'),
 ('UBIDOTS', 'UBI_USE_ISPINDLE_TOKEN', '0', '0', 'Benutzung des in der Spindel gespeicherten Tokens zur Weiterleitung an Ubidots ', '1 to use \"token\" field in iSpindle config (overrides UBI_TOKEN)', 'Utilizzo del token salvato nella iSpindle per l\'inoltro a ubidots', '_DEFAULT'),
-('VERSION', '', '007', '007', NULL, NULL, NULL, 'GLOBAL');
+('VERSION', '', '008', '008', NULL, NULL, NULL, 'GLOBAL');
 
 --
--- Indexes for dumped tables
+-- Indizes der exportierten Tabellen
 --
 
 --
--- Indexes for table `Settings`
+-- Indizes für die Tabelle `Settings`
 --
 ALTER TABLE `Settings`
   ADD PRIMARY KEY (`Section`,`Parameter`,`value`,`DeviceName`);
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
