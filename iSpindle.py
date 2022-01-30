@@ -4,6 +4,7 @@
 #
 # Version 3.4
 # Added RSSI to cbpi forwarding
+# Added forwarding to Littebock (thanks to Francois-Xavier / NoWing31)
 #
 # Version 3.3
 # Added support for SG transfer to grainconnect
@@ -76,7 +77,7 @@
 #
 
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-from datetime import datetime
+from datetime import datetime, timedelta
 import _thread
 import reprlib
 import json
@@ -157,6 +158,37 @@ def get_config_from_sql(section, parameter, spindle_name = '_DEFAULT'):
 
     except Exception as e:
         dbgprint(e)
+
+# Function to write to Settings table (to update Grainfather last sent timestamp)
+def write_config_to_sql(section, parameter, new_value, spindle_name = '_DEFAULT'):
+    # Writing config item back to Settings
+    try:
+        import mysql.connector
+        cnx = mysql.connector.connect(
+            user=SQL_USER,  port=SQL_PORT, password=SQL_PASSWORD, host=SQL_HOST, database=SQL_DB)
+        cur = cnx.cursor()
+        # If there is a Settings entry for this device, use the device's name, otherwise use _DEFAULT
+        sqlcheckdevice = "SELECT Value FROM Settings WHERE Section = '%s' and Parameter = '%s' " \
+                "and DeviceName = '%s' ORDER BY DeviceName DESC LIMIT 1;" %(section, parameter, spindle_name)
+        cur.execute(sqlcheckdevice)
+        row = cur.fetchone()
+        if row is not None: 
+            devicename = spindle_name 
+        else:
+            devicename = '_DEFAULT'
+        sqlupdate = "UPDATE Settings SET Value = '%s' WHERE Section = '%s' and Parameter = '%s' " \
+                    "and ( DeviceName = '_DEFAULT' or DeviceName = '%s' ) ;" %(new_value, section, parameter, devicename)
+
+        cur.execute(sqlupdate)
+        cnx.commit()
+        cur.close()
+        cnx.close()
+
+        return
+
+    except Exception as e:
+        dbgprint(e)
+
 
 #GENERAL
 PORT = int(get_config_from_sql('GENERAL', 'PORT' ,'GLOBAL')) # TCP Port to listen to (to be used in iSpindle config as well)
@@ -482,6 +514,9 @@ def handler(clientsock, addr):
         GRAINCONNECT = int(get_config_from_sql('GRAINCONNECT', 'ENABLE_GRAINCONNECT', spindle_name))
         GRAIN_SG = int(get_config_from_sql('GRAINCONNECT', 'ENABLE_SG', spindle_name))
         GC_URL = str(get_config_from_sql('GRAINCONNECT', 'GRAINCONNECT_URL', spindle_name))
+        GC_URLSLUG = str(get_config_from_sql('GRAINCONNECT', 'GRAINCONNECT_URLSLUG', spindle_name))
+        GRAINCONNECT_LASTSENT = str(get_config_from_sql('GRAINCONNECT', 'GRAINCONNECT_LASTSENT', spindle_name))
+        GRAINCONNECT_INTERVAL = int(get_config_from_sql('GRAINCONNECT', 'GRAINCONNECT_INTERVAL', spindle_name))
 
 
         if CSV:
@@ -569,7 +604,7 @@ def handler(clientsock, addr):
         if SQL:
             recipe = 'n/a'
             try:
-                dbgprint(repr(addr) + ' Reading last recipe name for corresponding Spindel' + spindle_name)
+                dbgprint(repr(addr) + ' Reading last recipe name for corresponding Spindel - ' + spindle_name)
                 # Get the recipe name from last reset for the spindel that has sent data
                 import mysql.connector
                 cnx = mysql.connector.connect(user=SQL_USER, port=SQL_PORT, password=SQL_PASSWORD, host=SQL_HOST,
@@ -587,7 +622,7 @@ def handler(clientsock, addr):
 
             recipe_id = 0
             try:
-                dbgprint(repr(addr) + ' Reading last recipe_id value for corresponding Spindel' + spindle_name)
+                dbgprint(repr(addr) + ' Reading last recipe_id value for corresponding Spindel - ' + spindle_name)
                 # Get the latest recipe_id for the spindel that has sent data from the archive table
                 import mysql.connector
                 cnx = mysql.connector.connect(user=SQL_USER, port=SQL_PORT, password=SQL_PASSWORD, host=SQL_HOST,
@@ -790,35 +825,57 @@ def handler(clientsock, addr):
                 dbgprint(repr(addr) + ' Fermentrack Error: ' + str(e))
 
         if GRAINCONNECT and gauge == 0:
+            # Check to see if we can send yet (GF has a 15 minute limit on uploads)
             try:
-                import urllib3
-                dbgprint(repr(addr) + ' - forwarding to Grainfather Connect at http://community.grainfather.com:80' + GC_URL)
-                GRAIN_SUFFIX = ""
-                if GRAIN_SG:
-                    GRAIN_SUFFIX = ",SG"
-                outdata = {
-                    'name': spindle_name + GRAIN_SUFFIX,
-                    'ID': spindle_id,
-                    'angle': angle,
-                    'temperature': temperature,
-                    'temp_units': temp_units,
-                    'battery': battery,
-                    'gravity': gravity,
-                    'token': user_token,
-                    'interval': interval,
-                    'RSSI': rssi
-                }
-                out = json.dumps(outdata)
+                fmt = '%Y-%m-%d %H:%M:%S'
+                last_send = datetime.strptime(GRAINCONNECT_LASTSENT, fmt)
+            except ValueError:
+                dbgprint(repr(addr) + ' Grainfather - Error in LASTSENT time value')
+                last_send = datetime.now() - timedelta(seconds=900)    
+                pass
+            now = datetime.now()
+            last_send_seconds_ago = (now - last_send).days * 86400 + (now - last_send).seconds
+            if last_send_seconds_ago >= GRAINCONNECT_INTERVAL:
+                dbgprint(repr(addr) + ' Grainfather - OK TO SEND (last sent ' + GRAINCONNECT_LASTSENT + ")")
+                try:
+                    import urllib3
+                    # Grainfather API accepts device specific URL suffix "/iot/[url-slug]/ispindel"
+                    # where url-slug is unique, like "blue-wind"
+                    # if GC_URLSLUG is defined, use that within fixed "/iot/[url-slug]/ispindel" suffix string, otherwise use GC_URL
+                    if GC_URL != '':
+                        GC_SUFFIX = GC_URL.strip()
+                    else:
+                        GC_SUFFIX = '/iot/' + GC_URLSLUG.strip() + '/ispindel'
+                    dbgprint(repr(addr) + ' - forwarding to Grainfather Connect at http://community.grainfather.com:80' + GC_SUFFIX)
+                    GRAIN_SUFFIX = ""
+                    if GRAIN_SG:
+                        GRAIN_SUFFIX = ",SG"
+                    outdata = {
+                        'name': spindle_name + GRAIN_SUFFIX,
+                        'ID': spindle_id,
+                        'angle': angle,
+                        'temperature': temperature,
+                        'temp_units': temp_units,
+                        'battery': battery,
+                        'gravity': gravity,
+                        'token': user_token,
+                        'interval': interval,
+                        'RSSI': rssi
+                    }
+                    out = json.dumps(outdata)
 
-                dbgprint(repr(addr) + ' - sending: ' + out)
-                url = 'http://community.grainfather.com:80' + GC_URL.strip() 
-                dbgprint(repr(addr) + ' to : ' + url)
-                http = urllib3.PoolManager()
-                header={'User-Agent': 'iSpindel', 'Connection': 'close', 'Content-Type': 'application/json'}
-                req = http.request('POST', url, body = out, headers = header)
-                dbgprint(repr(addr) + ' - HTTP Status code received: ' + str(req.status))
-            except Exception as e:
-                dbgprint(repr(addr) + ' - forwarding to Grainfather Connect Error: ' + str(e))
+                    dbgprint(repr(addr) + ' - sending: ' + out)
+                    url = 'http://community.grainfather.com:80' + GC_SUFFIX
+                    dbgprint(repr(addr) + ' to : ' + url)
+                    http = urllib3.PoolManager()
+                    header={'User-Agent': 'iSpindel', 'Connection': 'close', 'Content-Type': 'application/json'}
+                    req = http.request('POST', url, body = out, headers = header)
+                    dbgprint(repr(addr) + ' - HTTP Status code received: ' + str(req.status))
+                except Exception as e:
+                    dbgprint(repr(addr) + ' - forwarding to Grainfather Connect Error: ' + str(e))
+                write_config_to_sql('GRAINCONNECT', 'GRAINCONNECT_LASTSENT', now.strftime(fmt), spindle_name)
+            else:
+                dbgprint(repr(addr) + ' - NOT OK TO SEND (wait ' + str(GRAINCONNECT_INTERVAL - last_send_seconds_ago) + ' more seconds)')
 
 # not clear on how to update yet (can't be tested)
         if INFLUXDB and gauge == 0:

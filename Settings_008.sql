@@ -98,12 +98,15 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('FORWARD', 'FORWARDADDR', '0.0.0.0', '0.0.0.0', 'IP Adresse des anderen Servers', 'IP Adress of the other server', 'Indirizzo IP dell\'altro server', '_DEFAULT'),
 ('FORWARD', 'FORWARDPORT', '9501', '9501', 'Port des anderen Servers', 'Port of the remote server', 'Porta del server remoto', '_DEFAULT'),
 ('GENERAL', 'HOST', '0.0.0.0', '0.0.0.0', 'Erlaubter IP Bereich. 0.0.0.0 ermöglicht Verbindungen von überall', 'Allowed IP range. Leave at 0.0.0.0 to allow connections from anywhere', 'Gamma IP concessa. lasciare a 0.0.0.0 per permettere la connessione da ovunque', 'GLOBAL'),
+('GRAINCONNECT', 'ENABLE_GRAINCONNECT', '1', '0', 'Weiterleitung an Grainfather Connect (muss für jede Spindel individuell angelegt werden)', 'Forward to Grainfather Connect (must be cofigured for individual spindles)', 'Inoltra a Grainfather Connect (deve essere configurato per i singoli spindle)', '_DEFAULT'),
+('GRAINCONNECT', 'ENABLE_SG', '1', '0', 'Weiterleitung als SG (1) anstelle von Plato (0) (muss für jede Spindel individuell angelegt werden)', 'Forward as SG (1) instead of Plato (0) (must be cofigured for individual spindles)', 'Avanti come SG (1) invece di Plato (0) (deve essere configurato per i singoli spindle)', '_DEFAULT'),
+('GRAINCONNECT', 'GRAINCONNECT_INTERVAL', '900', '900', 'Grainfather Intervall zum Senden von Datenpaketen', 'Grainfather interval for sending data packages', 'Grainfather intervallo per l\'invio di pacchetti di dati', '_DEFAULT'),
+('GRAINCONNECT', 'GRAINCONNECT_LASTSENT', '', '', 'Grainfather Zeitstempel des letzten gesendeten Datenpaketen', 'Grainfather timestamp of last package sent', 'Grainfather timestamp dell\'ultimo pacchetti di dati inviato', '_DEFAULT'),
+('GRAINCONNECT', 'GRAINCONNECT_URL', '', '/URL', 'Grainfather \'Server URL\'', 'Grainfather \'Server URL\' (blank to use URLSLUG instead', 'Grainfather \'Server URL\'', '_DEFAULT'),
+('GRAINCONNECT', 'GRAINCONNECT_URLSLUG', '', 'url-slug', 'Grainfather \'Server URL\' stück für /iot/[url-slug]/ispindel', 'Grainfather \'Server URL\' part for /iot/[url-slug]/ispindel', 'Grainfather \'Server URL\'', '_DEFAULT'),
 ('GENERAL', 'LANGUAGE', 'DE', 'DE', 'Verwendete Sprache (DE für Deutsch, EN for Englisch, IT für Italienisch)', 'Displayed Language (DE for German, EN for English, IT for Italian)', 'Lingua visualizzata (DE per tedesco, EN per inglese, IT per italiano)', 'GLOBAL'),
 ('GENERAL', 'PORT', '9501', '9501', 'Port zur Kommunikation zwischen Spindel und TCP Server (muss auch in der Spindel hinterlegt sein)', 'TCP Port to listen to (to be used in iSpindle config as well)', 'Porta TCP di communicazione (da impostare anche nella configurazione iSpindle)', 'GLOBAL'),
 ('GENERAL', 'SHOWSUMMARY', '1', '1', 'Anzeige von Device in der Übersicht auf der Hauptseite. (0: nein 1: ja)', 'Show device in summary on main page (0: no 1: yes)', 'Visualizzazione del dispositivo nella panoramica sulla pagina principale. (0: no 1: sì)', '_DEFAULT'),
-('GRAINCONNECT', 'ENABLE_GRAINCONNECT', '0', '0', 'Weiterleitung an Grainfather Connect (muss für jede Spindel individuell angelegt werden)', 'Forward to Grainfather Connect (must be cofigured for individual spindles)', 'Inoltra a Grainfather Connect (deve essere configurato per i singoli spindle)', '_DEFAULT'),
-('GRAINCONNECT', 'ENABLE_SG', '0', '0', 'Weiterleitung als SG (1) anstelle von Plato (0) (muss für jede Spindel individuell angelegt werden)', 'Forward as SG (1) instead of Plato (0) (must be cofigured for individual spindles)', 'Avanti come SG (1) invece di Plato (0) (deve essere configurato per i singoli spindle)', '_DEFAULT'),
-('GRAINCONNECT', 'GRAINCONNECT_URL', '/URL', '/URL', 'Grainfather \'Server URL\'', 'Grainfather \'Server URL\'', 'Grainfather \'Server URL\'', '_DEFAULT'),
 ('INFLUXDB', 'ENABLE_INFLUXDB', '0', '0', 'Weiterleitung an InfluxDB', 'Forward to InfluxDB', 'Inoltro a InfluxDB', '_DEFAULT'),
 ('INFLUXDB', 'INFLUXDBADDR', 'localhost', 'localhost', 'IP-Adresse/Name des InfluxDB-Servers', 'IP address/hostname of the InfluxDB Server', 'Indirizzo IP / nome del server InfluxDB', '_DEFAULT'),
 ('INFLUXDB', 'INFLUXDBNAME', 'spindeldaten', 'spindeldaten', 'Name der Datenbank innerhalb von InfluxDB', 'Name of the database inside InfluxDB', 'Nome del database all\'interno di InfluxDB', '_DEFAULT'),
@@ -135,7 +138,7 @@ INSERT INTO `Settings` (`Section`, `Parameter`, `value`, `DEFAULT_value`, `Descr
 ('UBIDOTS', 'ENABLE_UBIDOTS', '0', '0', 'Weiterleitung der Daten an Ubidots (1: an 0: aus)', '1 to enable output to ubidots', '1 per abilitare l\'inoltro a ubidots ', '_DEFAULT'),
 ('UBIDOTS', 'UBI_TOKEN', 'my_token', 'my_token', 'UBIDOTS Token. Siehe Anleitung oder ubidots.com', 'global ubidots token, see manual or ubidots.com', 'Token ubidots vedi istruzioni o ubidots.com', '_DEFAULT'),
 ('UBIDOTS', 'UBI_USE_ISPINDLE_TOKEN', '0', '0', 'Benutzung des in der Spindel gespeicherten Tokens zur Weiterleitung an Ubidots ', '1 to use \"token\" field in iSpindle config (overrides UBI_TOKEN)', 'Utilizzo del token salvato nella iSpindle per l\'inoltro a ubidots', '_DEFAULT'),
-('VERSION', '', '007', '007', NULL, NULL, NULL, 'GLOBAL');
+('VERSION', '', '008', '008', NULL, NULL, NULL, 'GLOBAL');
 
 --
 -- Indizes der exportierten Tabellen
