@@ -456,7 +456,7 @@ echo "</tr>";
         if ($row['Section'] == $sections[$_GET['section']] and $row['DeviceName'] == $devices[$_GET['device']] ) {
         echo "<tr>";
         echo "<td>" . $row['Parameter'] . "</td>";
-        echo "<td><input type='text' name = '" . $row['Section'] . "_" . $row['Parameter'] . "' size='" . $InputWidth . "' required='required' value='" . $row['value']  . "'></td>";
+        echo "<td><input type='text' name = '" . $row['Section'] . "_" . $row['Parameter'] . "' size='" . $InputWidth . "' required='' value='" . $row['value']  . "'></td>";
         echo "<td>" . $row[$DESCRIPTION] . "</td>";
         echo "</tr>\n";
     }}
