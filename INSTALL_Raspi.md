@@ -29,8 +29,12 @@ Und das repo klonen:
 Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden:
 
 	sudo apt-get install apache2
+
+Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden:
+
+	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
 	
-Als Datenbank hbae ich MariaDB installiert.
+Als Datenbank habe ich MariaDB installiert.
 
 	sudo apt install mariadb-server
 	
@@ -54,7 +58,9 @@ Auf Raspbian lite war  Python 3 bereits mit installiert. Sollte das nicht der Fa
 
 Die python3 bibliothek für die Datenbankverbindung muss noch installiert werden:
 
-	sudo apt-get install python3-mysql.connector 
+	sudo pip3 install mysql-connector-python==8.0.29
+
+Hier ist es wichtig, dass die angegebene Version installiert wird, da es ab 8.0.30 Probleme mit der Verbindung gibt
 
 phpmyadmin sollte installiert werden:
 
@@ -83,7 +89,7 @@ Nun müssen die letzten Schritte zur Konfiguration noch durchgeführt werden (fa
 
 UTF-8 sollte in php aktiviert werden, falls das nicht bereits der Fall ist. Auf meinem system ist die php.ini hier zu finden:
 
-	cd /etc/php/7.3/apache2/
+	cd /etc/php/7.4/apache2/
 
 Das kann auf anderen System natürlich woanders unter /etc sein.
 
