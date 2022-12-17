@@ -29,7 +29,7 @@ Then you need to add a user called pi. This can be also a different user but the
 
 	sudo adduser pi 
 
-Don’t enter a password for this user
+Don't enter a password for this user
 
 Then move to the home directory of the new user:
 
@@ -42,6 +42,10 @@ And clone the repo:
 Install the apache server if it is not already installed on your system:
 
 	sudo apt-get install apache2
+
+You also might need to install php as this is not automtically installed on recent images:
+
+	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
 	
 I am using MariaDB on my system. To install mariadb 10.5 you need to add the repo to the system:
 
@@ -70,7 +74,9 @@ On my system python3 was installed. If this is not the case on your system you w
 
 Install the database connetor for python3:
 
-	sudo apt-get install python3-mysql.connector 
+	sudo pip3 install mysql-connector-python==8.0.29
+
+Please note, that newer versions may cause an issue with the database connection.
 
 Install phpmyadmin:
 

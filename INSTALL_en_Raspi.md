@@ -27,6 +27,10 @@ And clone the repo:
 Install the apache server if it is not already installed on your system:
 
 	sudo apt-get install apache2
+
+You also might need to install php as this is not automtically installed on recent images:
+
+	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
 	
 You need to install MariaDB on the Raspi. 10.3 seems to be the most recent version as of today for the Raspi (Mysql should also work)
 
@@ -51,7 +55,9 @@ On my system python3 was installed. If this is not the case on your system you w
 
 Install the database connetor for python3:
 
-	sudo apt-get install python3-mysql.connector 
+	sudo pip3 install mysql-connector-python==8.0.29
+
+Please note, that newer versions may cause an issue with the database connection.
 
 Install phpmyadmin:
 
@@ -79,7 +85,7 @@ Now do the final steps (if your user is not pi, you need to adapt these steps ac
 You should activate UTF-8 charset handling if not already configured per default:
 In my case the php.ini file is loacated here:
 
-	cd /etc/php/7.3/apache2/
+	cd /etc/php/7.4/apache2/
 
 edit the php.ini file by removing the ';' if not already done:
 	;default_charset = "UTF-8"    ->  default_charset = "UTF-8"   

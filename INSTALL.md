@@ -42,6 +42,10 @@ Und das repo klonen:
 Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden:
 
 	sudo apt-get install apache2
+
+Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden:
+
+	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
 	
 Als Datenbank nutze ich MariaDB auf meinem System. Um MariaDB 10.5 zu installieren, muss das repo zur Installationsdatenbank hinzugefügt werden:
 
@@ -70,7 +74,9 @@ Auf meinem Container war Python 3 bereits mit installiert. Sollte das nicht der 
 
 Die python3 bibliothek für die Datenbankverbindung muss noch installiert werden:
 
-	sudo apt-get install python3-mysql.connector 
+	sudo pip3 install mysql-connector-python==8.0.29
+
+Hier ist es wichtig, dass die angegebene Version installiert wird, da es ab 8.0.30 Probleme mit der Verbindung gibt
 
 phpmyadmin sollte installiert werden:
 

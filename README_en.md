@@ -1,6 +1,9 @@
 # iSpindel Generic TCP Server
 
 #### (iSpindle.py Version 3.1)
+**Update (17.12.22)
+- Updated Install instructions
+
 **New (16.01.2021)
 - Additional bugfix for calibration of a new spindle has been fixed.
 - New raspi image incl. change on accessibilty of database from other hosts

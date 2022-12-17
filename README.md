@@ -2,6 +2,9 @@
 
 #### (iSpindle.py Version 3.1)
 [English Version](README_en.md)
+**Update (17.12.22)
+- Aktualisierte Installationsanleitung
+
 **Neu (16.01.2021)
 - Weitere Bugfix für Kalibrierung einer neuen Spindel behoben.
 - Neues Rapsi image mit Änderung der DB Konfiguration: Zugriff auch von anderen hosts möglich
