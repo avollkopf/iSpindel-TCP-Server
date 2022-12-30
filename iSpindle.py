@@ -91,7 +91,8 @@ import sys
 # So there shouldn't be anything here for you to adjust anymore.
 
 config = configparser.ConfigParser()
-config_path = '~/iSpindel-Srv/config'
+config_path = './config/'
+config_path = config_path.replace('\\','/')
 
 try:
   with open(os.path.join(os.path.expanduser(config_path),'iSpindle_config.ini')) as f:
@@ -114,6 +115,15 @@ SQL_TABLE = config.get('MYSQL', 'SQL_TABLE')  # Table name
 SQL_USER = config.get('MYSQL', 'SQL_USER')  # DB user
 SQL_PASSWORD = config.get('MYSQL', 'SQL_PASSWORD')  # DB user's password (change this)
 SQL_PORT = config.getint('MYSQL', 'SQL_PORT')
+
+print("Try to connect to the db with folowing info :")
+print("\tSQL : "+str(SQL))
+print("\tSQL_HOST : "+SQL_HOST)
+print("\tSQL_DB : "+SQL_DB)
+print("\tSQL_TABLE : "+SQL_TABLE)
+print("\tSQL_USER : "+SQL_USER)
+print("\tSQL_PASSWORD : ****")#+SQL_PASSWORD)
+print("\tSQL_PORT : "+str(SQL_PORT))
 
 # Check and wait until database is available
 check = False
@@ -518,12 +528,11 @@ def handler(clientsock, addr):
         GRAINCONNECT_LASTSENT = str(get_config_from_sql('GRAINCONNECT', 'GRAINCONNECT_LASTSENT', spindle_name))
         GRAINCONNECT_INTERVAL = int(get_config_from_sql('GRAINCONNECT', 'GRAINCONNECT_INTERVAL', spindle_name))
 
-
         if CSV:
             dbgprint(repr(addr) + ' - writing CSV')
             recipe = 'n/a'
             try:
-                #   dbgprint(repr(addr) + ' Reading last recipe name for corresponding Spindel' + spindle_name)
+                #   dbgprint(repr(addr) + ' Reading last recipe name for corresponding Spindel ' + spindle_name)
                 #   Get the Recipe name from the last reset for the spindel that has sent data
                 import mysql.connector
                 cnx = mysql.connector.connect(user=SQL_USER, port=SQL_PORT, password=SQL_PASSWORD, host=SQL_HOST,
@@ -794,7 +803,6 @@ def handler(clientsock, addr):
                     dbgprint(repr(addr) + ' - received: ' + rcv)
             except Exception as e:
                 dbgprint(repr(addr) + ' Error while forwarding to ' + FORWARDADDR + ': ' + str(e))
-
         if FERMENTRACK and gauge == 0:
             try:
                 if FERM_USE_ISPINDLE_TOKEN:
@@ -1000,7 +1008,7 @@ def handler(clientsock, addr):
 
 def sendmail():
     try:
-        os.system('/usr/local/bin/sendmail.py')
+        os.system('sendmail.py')
     except Exception as e:
         dbgprint(e) 
 
