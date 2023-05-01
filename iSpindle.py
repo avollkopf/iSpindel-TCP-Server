@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Version: 3.6
+# Added: Brewersfriend support (thanks to Misenkooo)
+#
 # Version 3.5
 # Fixed InfluxDB for python3
 #
@@ -211,6 +214,12 @@ FORWARD = int(get_config_from_sql('FORWARD', 'ENABLE_FORWARD'))
 FORWARDADDR = get_config_from_sql('FORWARD', 'FORWARDADDR')
 FORWARDPORT =  int(get_config_from_sql('FORWARD', 'FORWARDPORT'))
 
+# Brewersfriend
+BREWERSFRIEND = int(get_config_from_sql('BREWERSFRIEND', 'ENABLE_BREWERSFRIEND'))
+BF_USE_ISPINDLE_TOKEN = int(get_config_from_sql('BREWERSFRIEND', 'BF_USE_ISPINDLE_TOKEN'))
+BREWERSFRIENDADDR = get_config_from_sql('BREWERSFRIEND', 'BREWERSFRIENDADDR')
+BREWERSFRIEND_TOKEN = get_config_from_sql('BREWERSFRIEND', 'BREWERSFRIEND_TOKEN')
+BREWERSFRIENDPORT = int(get_config_from_sql('BREWERSFRIEND', 'BREWERSFRIENDPORT'))
 
 # Fermentrack
 FERMENTRACK = int(get_config_from_sql('FERMENTRACK', 'ENABLE_FERMENTRACK'))
@@ -461,7 +470,14 @@ def handler(clientsock, addr):
         FORWARD = int(get_config_from_sql('FORWARD', 'ENABLE_FORWARD', spindle_name))
         FORWARDADDR = get_config_from_sql('FORWARD', 'FORWARDADDR', spindle_name)
         FORWARDPORT = int(get_config_from_sql('FORWARD', 'FORWARDPORT', spindle_name))
-
+        
+        # Brewersfriend
+        BREWERSFRIEND = int(get_config_from_sql('BREWERSFRIEND', 'ENABLE_BREWERSFRIEND', spindle_name))
+        BF_USE_ISPINDLE_TOKEN = int(get_config_from_sql('BREWERSFRIEND', 'BF_USE_ISPINDLE_TOKEN', spindle_name))
+        BREWERSFRIENDADDR = get_config_from_sql('BREWERSFRIEND', 'BREWERSFRIENDADDR', spindle_name)
+        BREWERSFRIEND_TOKEN = get_config_from_sql('BREWERSFRIEND', 'BREWERSFRIEND_TOKEN', spindle_name)
+        BREWERSFRIENDPORT = int(get_config_from_sql('BREWERSFRIEND', 'BREWERSFRIENDPORT', spindle_name))
+        
         # Fermentrack
         FERMENTRACK = int(get_config_from_sql('FERMENTRACK', 'ENABLE_FERMENTRACK', spindle_name))
         FERM_USE_ISPINDLE_TOKEN = get_config_from_sql('FERMENTRACK', 'FERM_USE_ISPINDLE_TOKEN', spindle_name)
@@ -793,8 +809,38 @@ def handler(clientsock, addr):
                 else:
                     dbgprint(repr(addr) + ' - received: ' + rcv)
             except Exception as e:
-                dbgprint(repr(addr) + ' Error while forwarding to ' + FORWARDADDR + ': ' + str(e))
-
+                dbgprint(repr(addr) + ' Error while forwarding to ' + FORWARDADDR + ': ' + str(e))                
+        
+        if BREWERSFRIEND and gauge == 0:
+            try:
+                if BF_USE_ISPINDLE_TOKEN:
+                    token = user_token
+                else:
+                    token = BREWERSFRIEND_TOKEN
+                if token != '':
+                    if token[:1] != '*':
+                        dbgprint(repr(addr) + ' - sending to brewersfriend')
+                        import urllib3
+                        outdata = {                            
+                            "name": spindle_name,
+                            "angle": angle,
+                            "temperature": temperature,
+                            "temp_units": "C",
+                            "battery": battery,
+                            "gravity": gravity,
+                            "interval": interval,                            
+                            "RSSI": rssi
+                        }
+                        out = json.dumps(outdata).encode('utf-8')
+                        dbgprint(repr(addr) + ' - sending: ' + out.decode('utf-8'))                       
+                        url = 'http://' + BREWERSFRIENDADDR + ':' + str(BREWERSFRIENDPORT) + '/ispindel_sg/' + token
+                        dbgprint(repr(addr) + ' to : ' + url)
+                        http = urllib3.PoolManager()
+                        req = http.request('POST',url,body=out, headers={'Content-Type': 'application/json', 'User-Agent': 'iSpindel'})
+                        dbgprint(repr(addr) + ' - HTTP Status code received: ' + str(req.status))
+            except Exception as e:
+                dbgprint(repr(addr) + ' Brewersfriend Error: ' + str(e))
+        
         if FERMENTRACK and gauge == 0:
             try:
                 if FERM_USE_ISPINDLE_TOKEN:
