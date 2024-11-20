@@ -7,8 +7,8 @@ Sollte der Server bereits installiert sein, so kann man im Server Verzeichnis mi
 
 Nach der Installation des Systems (ich habe z.B. Raaspian 32 bit lite verwendet) habe ich zunächst ein Update durchgeführt:
 
-	sudo apt-get update
-	sudo apt-get upgrade
+	sudo apt update
+	sudo apt upgrade
 
 Dann habe ich den ssh server vie raspi-config aktiviert.
 
@@ -16,7 +16,7 @@ Außerdem habe ich die Zeitzone via Raspi-config angepasst (z.B Europe/Berlin)
 	
 Dann müssen die git bibliotheken installiert werden, damit man das repo später klonen kann:
 
-	sudo apt-get install git-all
+	sudo apt install git-all
 
 Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
 
@@ -24,11 +24,15 @@ Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
 
 Und das repo klonen:
 
-	sudo git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
+	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
+
+Aktuell notwendig, da neue Version zurzeit nur im Development branch verfügbar ist:
+	cd iSpindle-Srv
+	git checkout development
 
 Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden (für das volle bookworm 64 bit nicht notwendig):
 
-	sudo apt-get install apache2
+	sudo apt install apache2
 
 Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden (für das volle bookworm 64 bit nicht notwendig):
 
@@ -74,15 +78,16 @@ Definition eine passworts für phpmyadmin.
 Nun müssen die letzten Schritte zur Konfiguration noch durchgeführt werden (falls zuvor ein anderer username als pi gewählt wurde, müssen diese Schritte und das ispindle-srv script entsprechend angepasst werden):
 
 	cd /home/pi/iSpindle-Srv
-	sudo mv iSpindle.py /usr/local/bin
-	sudo mv sendmail.py /usr/local/bin
-	!!!!To be changed !!!! sudo mv ispindle-srv /etc/init.d
+	sudo cp iSpindle.py /usr/local/bin
+	sudo cp sendmail.py /usr/local/bin
+	sudo cp ispindle-srv.service /etc/systemd/system/
 	sudo chmod 755 /usr/local/bin/iSpindle.py
 	sudo chmod 755 /usr/local/bin/sendmail.py
-	!!!!To be changed !!!! sudo chmod 755 /etc/init.d/ispindle-srv
-	!!!!To be changed !!!! sudo update-rc.d ispindle-srv defaults    
+	sudo systemctl enable ispindle-srv.service
+	sudo systemctl start ispindle-srv.service
 
-    sudo cp /home/pi/iSpindle-Srv/ /usr/share
+
+    sudo cp -R /home/pi/iSpindle-Srv/ /usr/share
     sudo chown -R root:www-data /usr/share/iSpindle-Srv/*
     sudo chown -h root:www-data /usr/share/iSpindle-Srv
 	sudo chmod 775 /usr/share/iSpindle-Srv/config
@@ -90,6 +95,7 @@ Nun müssen die letzten Schritte zur Konfiguration noch durchgeführt werden (fa
 	cd /etc/apache2/conf-available
 	sudo ln -sf /usr/share/iSpindle-Srv/config/apache.conf iSpindle.conf
 	sudo a2enconf iSpindle
+	sudo systemctl reload apache2
 
 UTF-8 sollte in php aktiviert werden, falls das nicht bereits der Fall ist. Auf meinem system ist die php.ini hier zu finden:
 
