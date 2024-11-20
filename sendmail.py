@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# V2.0 beta
+# Test for bookworm with different configuration
 # V1.3
 # Add Pushover Message support
 #
@@ -55,7 +57,7 @@ import sys
 # CONFIG Start
 config = configparser.ConfigParser()
 # load config from personal ini file if available
-config_path = '~/iSpindel-Srv/config'
+config_path = '/usr/share/iSpindle-Srv/config'
 
 try:
   with open(os.path.join(os.path.expanduser(config_path),'iSpindle_config.ini')) as f:
