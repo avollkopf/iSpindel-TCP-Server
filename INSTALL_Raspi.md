@@ -86,6 +86,10 @@ Nun müssen die letzten Schritte zur Konfiguration noch durchgeführt werden (fa
     sudo chown -R root:www-data /usr/share/iSpindle-Srv/*
     sudo chown -h root:www-data /usr/share/iSpindle-Srv
 	sudo chmod 775 /usr/share/iSpindle-Srv/config
+	
+	cd /etc/apache2/conf-available
+	sudo ln -sf /usr/share/iSpindle-Srv/config/apache.conf iSpindle.conf
+	sudo a2enconf iSpindle
 
 UTF-8 sollte in php aktiviert werden, falls das nicht bereits der Fall ist. Auf meinem system ist die php.ini hier zu finden:
 
