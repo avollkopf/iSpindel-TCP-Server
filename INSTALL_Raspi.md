@@ -55,7 +55,7 @@ Für den Root user der Datenbank ggf ein Passwort eingeben.
 
 Einen user Pi in der Datenbank anlegen (Passwort hier als Beispiel: 'PiSpindle'):
 	
-sudo mysql --user=root mysql
+	sudo mysql --user=root mysql
 
 ```
 CREATE USER 'pi'@'localhost' IDENTIFIED BY 'PiSpindle';
