@@ -64,7 +64,7 @@ FLUSH PRIVILEGES;
 QUIT;
  ```
 
-Auf Raspbian lite war  Python 3 bereits mit installiert. Sollte das nicht der Fall sein, so muss das auch noch per apt-get gemacht werden
+Python 3 war bereits mit installiert. Sollte das nicht der Fall sein, so muss das auch noch per apt-get gemacht werden
 
 Die python3 bibliothek für die Datenbankverbindung muss noch installiert werden:
 
