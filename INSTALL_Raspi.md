@@ -18,17 +18,18 @@ Außerdem habe ich die Zeitzone via Raspi-config angepasst (z.B Europe/Berlin)
 	
 Dann müssen die git bibliotheken installiert werden, damit man das repo später klonen kann:
 
-	`sudo apt install git-all`
+	sudo apt install git-all
 
 Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
 
-	`cd /home/pi`
+	cd /home/pi
 
 Und das repo klonen:
 
-	`git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv`
+	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
 
 Aktuell notwendig, da neue Version zurzeit nur im Development branch verfügbar ist:
+
 ```
 cd iSpindle-Srv
 git checkout development
@@ -36,25 +37,25 @@ git checkout development
 
 Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden (für das volle bookworm 64 bit nicht notwendig):
 
-	`sudo apt install apache2`
+	sudo apt install apache2
 
 Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden (für das volle bookworm 64 bit nicht notwendig):
 
-	`sudo apt-get install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-mysql php8.2-curl php8.2-gd php8.2-zip -y`
+	sudo apt-get install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-mysql php8.2-curl php8.2-gd php8.2-zip -y
 	
 Als Datenbank habe ich MariaDB installiert.
 
-	`sudo apt install mariadb-server`
+	sudo apt install mariadb-server
 	
 Die Datenbank muss konfiguriert werden:
 
-	`sudo mysql_secure_installation`
+	sudo mysql_secure_installation
 
 Für den Root user der Datenbank ggf ein Passwort eingeben.
 
 Einen user Pi in der Datenbank anlegen (Passwort hier als Beispiel: 'PiSpindle'):
 	
-	`sudo mysql --user=root mysql`
+sudo mysql --user=root mysql
 
 ```
 CREATE USER 'pi'@'localhost' IDENTIFIED BY 'PiSpindle';
@@ -67,11 +68,11 @@ Auf Raspbian lite war  Python 3 bereits mit installiert. Sollte das nicht der Fa
 
 Die python3 bibliothek für die Datenbankverbindung muss noch installiert werden:
 
-	`sudo pip install --break-system-packages mysql-connector-python`
+	sudo pip install --break-system-packages mysql-connector-python
 
 phpmyadmin sollte installiert werden:
 
-	`sudo apt-get install phpmyadmin`
+	sudo apt-get install phpmyadmin
 
 Wenn zuvor der apache Web server installiert wurde muss hier auch apache2 als webserver ausgewählt werden.
 Datenbank Konfiguration: Ja
@@ -114,13 +115,13 @@ sudo systemctl reload apache2
 
 UTF-8 sollte in php aktiviert werden, falls das nicht bereits der Fall ist. Auf meinem system ist die php.ini hier zu finden:
 
-	`cd /etc/php/8.2/apache2/`
+	cd /etc/php/8.2/apache2/
 
 Das kann auf anderen System natürlich woanders unter /etc sein.
 
 Die php.ini muss hierzu editiert werden und ein ';' am Anfang der folgenden Zeilt entfernt werden, falls es dort ist:
 
-	`;default_charset = "UTF-8"`    ->  `default_charset = "UTF-8"`
+	;default_charset = "UTF-8"`    ->  `default_charset = "UTF-8"
 
 
 Nun kann die Webesite des Servers aufgerufen werden:
