@@ -110,6 +110,17 @@ sudo ln -sf /usr/share/iSpindle-Srv/config/apache.conf iSpindle.conf
 sudo a2enconf iSpindle
 sudo systemctl reload apache2
 ```
+
+You should activate UTF-8 charset handling if not already configured per default: In my case the php.ini file is loacated here:
+
+	cd /etc/php/8.2/apache2/
+
+edit the php.ini file by removing the ';' if not already done: 
+
+	;default_charset = "UTF-8" -> default_charset = "UTF-8"
+
+
+
 Call the webpage from your browser:
 
 http://IPOFYOURSYSTEM/iSpindle/index.php
