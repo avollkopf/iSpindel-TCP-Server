@@ -6,29 +6,34 @@ Installation auf Raspi: (https://github.com/avollkopf/iSpindel-TCP-Server/blob/m
 
 Sollte der Server bereits installiert sein, so kann man im Server Verzeichnis mit sudo./update.sh ein Update durchführen.
 
-Bei mir läuft der Server in einem Ubuntu 16.04 Container auf meiner NAS. 
+Bei mir läuft der Server in einem Debian 12 (bookworm) Container auf meiner NAS. 
 
 Nach der Installation des Systems habe ich zunächst ein Update durchgeführt:
 
-	sudo apt-get update
-	sudo apt-get upgrade
+	apt update
+	apt upgrade
 
 Da als Standard kein ssh server installiert war, habe ich den noch nachträglich installiert (optional, falls Zugriff über putty gewünscht ist):
 
-	sudo apt-get install openssh-server
+	apt install ssh
 	
 Dann müssen die git bibliotheken installiert werden, damit man das repo später klonen kann:
 
-	sudo apt-get install git-all
+	apt install git-all
 
-Optional könnnen die deutschen locales mit den folgenden Kommandos installiert werden
+Optional könnnen die deutschen locales mit den folgenden Kommandos installiert werden. Ädert `/etc/locale.gen` und aktiviert die Sprache, die benötigt wird durch Entfernen des `#` vor eurer gewünschete Sprache.
 
-	sudo locale-gen de_DE.UTF-8
-	sudo update-locale LANG="de_DE.utf8" LANGUAGE="de:en" LC_ALL="de_DE.utf8"
+Beispiel für `de_DE.utf8`
 
+	locale-gen
+	update-locale LANG="de_DE.utf8" LANGUAGE="de:de" LC_ALL="de_DE.utf8"
+
+
+Es muss noch die korrekte Timezone für das System gesetzt werden. Das wird mit `tzselect` gemacht.
+	
 Danach muss ein user'pi' erstellt werden. Das kann auch ein anderer nutzername sein. Aber dann müssen auch die späteren Schritte und das script ispindle-srv entsprechend dem Nutzernamen angepasst werden.
 
-	sudo adduser pi 
+	adduser pi 
 
 Bei der Passwortabfrage kein Passwort für den Nutzer angeben
 Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
@@ -37,32 +42,26 @@ Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
 
 Und das repo klonen:
 
-	sudo git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindel-Srv
+	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
 
-Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden:
+Aktuell notwendig, da neue Version zurzeit nur im Development branch verfügbar ist:
 
-	sudo apt-get install apache2
+```
+cd iSpindle-Srv
+git checkout development
+```
 
-Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden:
+Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden (war beim bookworm image nicht notwendig):
 
-	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
+	apt install apache2
+
+Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden. Bei meinem Image war es aber notwendig:
+
+	apt install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-mysql php8.2-curl php8.2-gd php8.2-zip -y
 	
-Als Datenbank nutze ich MariaDB auf meinem System. Um MariaDB 10.5 zu installieren, muss das repo zur Installationsdatenbank hinzugefügt werden:
+MariaDB installieren:
 
-	sudo apt -y install software-properties-common gnupg-curl
-	sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-
-Der nächste Schritt ist nun für Ubuntu 16.04 spezifisch und muss für das entsprechende system angepasst werden, damit das korrekte repo verwendet wird:
-
-	sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mariadb.mirror.liquidtelecom.com/repo/10.5/ubuntu xenial main'
-
-Dan muss ein update der Installationsdatanbank durchgeführt werden:
-
-	sudo apt-get update
-
-Und nun kann MariaDB installiert werden:
-
-	sudo apt install mariadb-server mariadb-client
+	apt install mariadb-server
 
 Die Datenbank muss konfiguriert werden:
 
@@ -70,13 +69,27 @@ Die Datenbank muss konfiguriert werden:
 
 Für den Root user der Datenbank muss ein Passwort eingegeben werden 
 
-Auf meinem Container war Python 3 bereits mit installiert. Sollte das nicht der Fall sein, so muss das auch noch per apt-get gemacht werden
+Einen user Pi in der Datenbank anlegen (Passwort hier als Beispiel: 'PiSpindle'):
+	
+	sudo mysql --user=root mysql
+
+```
+CREATE USER 'pi'@'localhost' IDENTIFIED BY 'PiSpindle';
+GRANT ALL PRIVILEGES ON *.* TO 'pi'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+QUIT;
+ ```
+
+Im Container war python-requests und pip nicht installiert. Installation erfolgt mit
+
+	apt install python3-pip
+	apt install python3-requests
+
 
 Die python3 bibliothek für die Datenbankverbindung muss noch installiert werden:
 
-	sudo pip3 install mysql-connector-python==8.0.29
+	pip install --break-system-packages mysql-connector-python
 
-Hier ist es wichtig, dass die angegebene Version installiert wird, da es ab 8.0.30 Probleme mit der Verbindung gibt
 
 phpmyadmin sollte installiert werden:
 
@@ -89,50 +102,63 @@ Definition eine passworts für phpmyadmin.
 
 Nun müssen die letzten Schritte zur Konfiguration noch durchgeführt werden (falls zuvor ein anderer username als pi gewählt wurde, müssen diese Schritte und das ispindle-srv script entsprechend angepasst werden):
 
-	cd /home/pi/iSpindel-Srv
-	sudo mv iSpindle.py /usr/local/bin
-	sudo mv ispindle-srv /etc/init.d
-	sudo chmod 755 /usr/local/bin/iSpindle.py
-	sudo chmod 755 /etc/init.d/ispindle-srv
-	sudo update-rc.d ispindle-srv defaults    
+Zunächst müssen die ausführbaren files in ein anderes Verzeichnis kopiert werden und attribute entsprechend gesetzt werden:
+```
+cd /home/pi/iSpindle-Srv
+sudo cp iSpindle.py /usr/local/bin
+sudo cp sendmail.py /usr/local/bin
+sudo chmod 755 /usr/local/bin/iSpindle.py
+sudo chmod 755 /usr/local/bin/sendmail.py
+```
 
-    cd /var/www/html    
-    sudo ln -sf /home/pi/iSpindel-Srv/web/ iSpindle
-    sudo chown -R pi:pi iSpindle/*
-    sudo chown -h pi:pi iSpindle
+Dann muss der Server als dienst registriert und gestartet werden:
+```
+sudo cp ispindle-srv.service /etc/systemd/system/
+sudo systemctl enable ispindle-srv.service
+sudo systemctl start ispindle-srv.service
+```
+
+Nun müssen die php scripte in ein Verzeichnes außerhalb des home directories kopiert werden und die Zugriffsrechte angepasst werden:
+```
+sudo cp -R /home/pi/iSpindle-Srv/ /usr/share
+sudo chown -R root:www-data /usr/share/iSpindle-Srv/*
+sudo chown -h root:www-data /usr/share/iSpindle-Srv
+sudo chmod 775 /usr/share/iSpindle-Srv/config
+```
+
+Dann muss die Webseite im Apache Server registriert werden:
+```
+cd /etc/apache2/conf-available
+sudo ln -sf /usr/share/iSpindle-Srv/config/apache.conf iSpindle.conf
+sudo a2enconf iSpindle
+sudo systemctl reload apache2
+```
 
 UTF-8 sollte in php aktiviert werden, falls das nicht bereits der Fall ist. Auf meinem system ist die php.ini hier zu finden:
 
-	cd /etc/php/7.0/apache2/
+	cd /etc/php/8.2/apache2/
 
 Das kann auf anderen System natürlich woanders unter /etc sein.
 
 Die php.ini muss hierzu editiert werden und ein ';' am Anfang der folgenden Zeilt entfernt werden, falls es dort ist:
 
-	;default_charset = "UTF-8"    ->  default_charset = "UTF-8"   
+	;default_charset = "UTF-8"`    ->  `default_charset = "UTF-8"
 
-Nun müssen noch die Rechte im config Verzeichnis angepasst werden, damit das setup script eine Konfigurationsdatei erstellen kann:
+Ausserdem die Zeitzone für php einstellen (die gleiche, die oben für das system gewählt wurde)
 
-	cd /home/pi/iSpindel-Srv
+	;date.timezone = -> date.timezone="Europe/Berlin" 
 
-Die Gruppe des verzeichnisses muss dem des apache Nutzers entsprechen (Beispiel: www-data)
+Für Euopa/Berlin als Beispiel
 
-	sudo chown root:www-data config
+Dann apache2 noch einmal starten
 
-Der Gruppe müssen für das Verzeichnis Schreibrechte erteilt werden:
-
-	sudo chmod 775 config
+	sudo systemctl restart apache2
 
 Nun kann die Webesite des Servers aufgerufen werden:
 
 http://IPOFYOURSYSTEM/iSpindle/index.php
 
 Wenn die Datenbank nicht vorhanden ist, wird man automatisch zu enem setup.php script umgeleitet. Dieses kann dann die Datenbank automatisch erstellen.
-Es muss lediglich das root Passwort der Datenbank eingegeben werden und man hat die Möglichkeit den Namen, User und das Passwort der Spindel Datenbank anzupassen.
+Es muss lediglich der admin/root username und passwort eingegeben werden, dem zuvor alle Privilegien für die Datenbank erteilt worden. Man hat auch die Möglichkeit den Namen, User und das Passwort der Spindel Datenbank anzupassen.
 Wenn dann die Eingaben bestätigt werden, erstellt das skript die Datenbank und erstellt die konfigurationsdateien für php und die python skripte
 Sollten die Schreibrechte für das Konfigurationsfile nicht korrekt sein, so teilt das skript einem das im Vorfeld mit.
-
-
-
-
-

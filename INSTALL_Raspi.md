@@ -123,6 +123,15 @@ Die php.ini muss hierzu editiert werden und ein ';' am Anfang der folgenden Zeil
 
 	;default_charset = "UTF-8"`    ->  `default_charset = "UTF-8"
 
+Ausserdem die Zeitzone für php einstellen (die gleiche, die für das System gewählt wurde)
+
+	;date.timezone = -> date.timezone="Europe/Berlin" 
+
+Für Euopa/Berlin als Beispiel
+
+Dann apache noch einmal starten
+
+	sudo systemctl restart apache2
 
 Nun kann die Webesite des Servers aufgerufen werden:
 

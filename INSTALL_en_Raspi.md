@@ -119,7 +119,15 @@ edit the php.ini file by removing the ';' if not already done:
 
 	;default_charset = "UTF-8" -> default_charset = "UTF-8"
 
+Adapt the timezone for php
 
+	;date.timezone = -> date.timezone="Europe/Berlin" 
+
+As example for Europe/Berlin (Adapt it to your timezone)
+
+Restart apache 
+
+	sudo systemctl restart apache2
 
 Call the webpage from your browser:
 
