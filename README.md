@@ -1,7 +1,11 @@
 # iSpindel Generic TCP Server
 
-#### (iSpindle.py Version 3.1)
+#### (iSpindle.py Version 4.0)
 [English Version](README_en.md)
+**Update (27.11.24)
+- Aktualisierte Installationsanleitung
+- Kompatibilität mit Debian Bookworm 
+
 **Update (17.12.22)
 - Aktualisierte Installationsanleitung
 

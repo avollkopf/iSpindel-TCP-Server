@@ -28,13 +28,6 @@ Und das repo klonen:
 
 	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
 
-Aktuell notwendig, da neue Version zurzeit nur im Development branch verfügbar ist:
-
-```
-cd iSpindle-Srv
-git checkout development
-```
-
 Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden (für das volle bookworm 64 bit nicht notwendig):
 
 	sudo apt install apache2

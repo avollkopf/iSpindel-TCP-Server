@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Version 4.0 beta
+# Version 4.0
 # Test for bookworm with different configuration
 #
 # Version 3.5

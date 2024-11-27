@@ -43,13 +43,6 @@ And clone the repo:
 
 	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
 
-Currently required until development branch is merged into main:
-
-```
-cd iSpindle-Srv
-git checkout development
-```
-
 Install the apache server if it is not already installed on your system:
 
 	apt install apache2

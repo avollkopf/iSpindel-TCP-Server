@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# V2.0 beta
+# V2.0
 # Test for bookworm with different configuration
 # V1.3
 # Add Pushover Message support
