@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Version 4.0
+# Test for bookworm with different configuration
+#
 # Version 3.5
 # Fixed InfluxDB for python3
 #
@@ -91,7 +94,7 @@ import sys
 # So there shouldn't be anything here for you to adjust anymore.
 
 config = configparser.ConfigParser()
-config_path = '~/iSpindel-Srv/config'
+config_path = '/usr/share/iSpindle-Srv/config'
 
 try:
   with open(os.path.join(os.path.expanduser(config_path),'iSpindle_config.ini')) as f:

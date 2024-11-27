@@ -3,10 +3,10 @@
 
 If the server has been already installed, you can perform an update with  sudo./update-raspi.sh in the server folder.
 
-After installation of the system (I was using Rasbpian lite) I started to update it:
+After installation of the system (tested with bookworm 64 bit full) I started to update it:
 
-	sudo apt-get update
-	sudo apt-get upgrade
+	sudo apt update
+	sudo apt upgrade
 
 I activated the ssh server to get access via raspi-config
 I also configured the timezone to my needs (e.g. Europe/Berlin)
@@ -22,15 +22,15 @@ Then move to the home directory of the new user:
 
 And clone the repo:
 
-	sudo git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindel-Srv
+	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindel-Srv
 
-Install the apache server if it is not already installed on your system:
+Install the apache server if it is not already installed on your system (not required for the afoementioned bookworm 64 bit full): 
 
 	sudo apt-get install apache2
 
-You also might need to install php as this is not automtically installed on recent images:
+You also might need to install php as this is not automtically installed on recent images (also not required on bookworm 64 bit full):
 
-	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
+	sudo apt-get install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-mysql php8.2-curl php8.2-gd php8.2-zip -y
 	
 You need to install MariaDB on the Raspi. 10.3 seems to be the most recent version as of today for the Raspi (Mysql should also work)
 
@@ -46,18 +46,18 @@ Add a user Pi to the database that has all privileges to create also the iSpindl
 	
 	sudo mysql --user=root mysql
 
+```
 	CREATE USER 'pi'@'localhost' IDENTIFIED BY 'PiSpindle';
 	GRANT ALL PRIVILEGES ON *.* TO 'pi'@'localhost' WITH GRANT OPTION;
 	FLUSH PRIVILEGES;
 	QUIT;
+```
 
 On my system python3 was installed. If this is not the case on your system you will need to install python3
 
 Install the database connetor for python3:
 
-	sudo pip3 install mysql-connector-python==8.0.29
-
-Please note, that newer versions may cause an issue with the database connection.
+	sudo pip install --break-system-packages mysql-connector-python
 
 Install phpmyadmin:
 
@@ -70,37 +70,56 @@ define a phpmyadmin password.
 
 Now do the final steps (if your user is not pi, you need to adapt these steps accordingly and modify the ispindle-srv script):
 
-	cd /home/pi/iSpindel-Srv
-	sudo mv iSpindle.py /usr/local/bin
-	sudo mv ispindle-srv /etc/init.d
-	sudo chmod 755 /usr/local/bin/iSpindle.py
-	sudo chmod 755 /etc/init.d/ispindle-srv
-	sudo update-rc.d ispindle-srv defaults    
+In a first step you need to copy the executable files to a different directory and chnge the file attributes:
+```
+cd /home/pi/iSpindle-Srv
+sudo cp iSpindle.py /usr/local/bin
+sudo cp sendmail.py /usr/local/bin
+sudo chmod 755 /usr/local/bin/iSpindle.py
+sudo chmod 755 /usr/local/bin/sendmail.py
+```
 
-    cd /var/www/html    
-    sudo ln -sf /home/pi/iSpindel-Srv/web/ iSpindle
-    sudo chown -R pi:pi iSpindle/*
-    sudo chown -h pi:pi iSpindle
+In the next step, the server needs to be registred and started as a service:
+```
+sudo cp ispindle-srv.service /etc/systemd/system/
+sudo systemctl enable ispindle-srv.service
+sudo systemctl start ispindle-srv.service
+```
 
-You should activate UTF-8 charset handling if not already configured per default:
-In my case the php.ini file is loacated here:
+Now copy the php scripts to a different directory and adapt the access rights:
+```
+sudo cp -R /home/pi/iSpindle-Srv/ /usr/share
+sudo chown -R root:www-data /usr/share/iSpindle-Srv/*
+sudo chown -h root:www-data /usr/share/iSpindle-Srv
+sudo chmod 775 /usr/share/iSpindle-Srv/config
+```
 
-	cd /etc/php/7.4/apache2/
 
-edit the php.ini file by removing the ';' if not already done:
-	;default_charset = "UTF-8"    ->  default_charset = "UTF-8"   
+Finally, you need to register the webpage in the apache server and reload the apache config:
+```
+cd /etc/apache2/conf-available
+sudo ln -sf /usr/share/iSpindle-Srv/config/apache.conf iSpindle.conf
+sudo a2enconf iSpindle
+sudo systemctl reload apache2
+```
 
-Now change the rights of the config directory to give the web server group write-access:
+You should activate UTF-8 charset handling if not already configured per default: In my case the php.ini file is loacated here:
 
-	cd /home/pi/iSpindel-Srv
+	cd /etc/php/8.2/apache2/
 
-Change group of config file to apache user group (example www-data)
+edit the php.ini file by removing the ';' if not already done: 
 
-	sudo chown root:www-data config
+	;default_charset = "UTF-8" -> default_charset = "UTF-8"
 
-Allow write access to config directory for group
+Adapt the timezone for php
 
-	sudo chmod 775 config
+	;date.timezone = -> date.timezone="Europe/Berlin" 
+
+As example for Europe/Berlin (Adapt it to your timezone)
+
+Restart apache 
+
+	sudo systemctl restart apache2
 
 Call the webpage from your browser:
 

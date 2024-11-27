@@ -5,10 +5,12 @@
 
 Sollte der Server bereits installiert sein, so kann man im Server Verzeichnis mit sudo./update-raspi.sh ein Update durchführen.
 
-Nach der Installation des Systems (ich habe z.B. Raaspian 32 bit lite verwendet) habe ich zunächst ein Update durchgeführt:
+Nach der Installation des Systems (gestestet auf bookworm 64 bit full) habe ich zunächst ein Update durchgeführt:
 
-	sudo apt-get update
-	sudo apt-get upgrade
+```
+sudo apt update
+sudo apt upgrade
+```
 
 Dann habe ich den ssh server vie raspi-config aktiviert.
 
@@ -16,7 +18,7 @@ Außerdem habe ich die Zeitzone via Raspi-config angepasst (z.B Europe/Berlin)
 	
 Dann müssen die git bibliotheken installiert werden, damit man das repo später klonen kann:
 
-	sudo apt-get install git-all
+	sudo apt install git-all
 
 Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
 
@@ -24,15 +26,15 @@ Danach in das Home Verzeichnis des angelegten Nutzers wechseln:
 
 Und das repo klonen:
 
-	sudo git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindel-Srv
+	git clone https://github.com/avollkopf/iSpindel-TCP-Server iSpindle-Srv
 
-Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden:
+Falls nicht bereits auf dem System, muss nun der apache server isntalliert werden (für das volle bookworm 64 bit nicht notwendig):
 
-	sudo apt-get install apache2
+	sudo apt install apache2
 
-Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden:
+Es ist auch nicht immer zwingend, dass php vorinstalliert ist. Somit muss auch php installiert werden (für das volle bookworm 64 bit nicht notwendig):
 
-	sudo apt-get install php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-mysql php7.4-curl php7.4-gd php7.4-zip -y
+	sudo apt-get install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-mysql php8.2-curl php8.2-gd php8.2-zip -y
 	
 Als Datenbank habe ich MariaDB installiert.
 
@@ -48,19 +50,18 @@ Einen user Pi in der Datenbank anlegen (Passwort hier als Beispiel: 'PiSpindle')
 	
 	sudo mysql --user=root mysql
 
-	CREATE USER 'pi'@'localhost' IDENTIFIED BY 'PiSpindle';
-	GRANT ALL PRIVILEGES ON *.* TO 'pi'@'localhost' WITH GRANT OPTION;
-	FLUSH PRIVILEGES;
-	QUIT;
- 
+```
+CREATE USER 'pi'@'localhost' IDENTIFIED BY 'PiSpindle';
+GRANT ALL PRIVILEGES ON *.* TO 'pi'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+QUIT;
+ ```
 
-Auf Raspbian lite war  Python 3 bereits mit installiert. Sollte das nicht der Fall sein, so muss das auch noch per apt-get gemacht werden
+Python 3 war bereits mit installiert. Sollte das nicht der Fall sein, so muss das auch noch per apt-get gemacht werden
 
 Die python3 bibliothek für die Datenbankverbindung muss noch installiert werden:
 
-	sudo pip3 install mysql-connector-python==8.0.29
-
-Hier ist es wichtig, dass die angegebene Version installiert wird, da es ab 8.0.30 Probleme mit der Verbindung gibt
+	sudo pip install --break-system-packages mysql-connector-python
 
 phpmyadmin sollte installiert werden:
 
@@ -73,41 +74,57 @@ Definition eine passworts für phpmyadmin.
 
 Nun müssen die letzten Schritte zur Konfiguration noch durchgeführt werden (falls zuvor ein anderer username als pi gewählt wurde, müssen diese Schritte und das ispindle-srv script entsprechend angepasst werden):
 
-	cd /home/pi/iSpindel-Srv
-	sudo mv iSpindle.py /usr/local/bin
-	sudo mv sendmail.py /usr/local/bin
-	sudo mv ispindle-srv /etc/init.d
-	sudo chmod 755 /usr/local/bin/iSpindle.py
-	sudo chmod 755 /usr/local/bin/sendmail.py
-	sudo chmod 755 /etc/init.d/ispindle-srv
-	sudo update-rc.d ispindle-srv defaults    
+Zunächst müssen die ausführbaren files in ein anderes Verzeichnis kopiert werden und attribute entsprechend gesetzt werden:
+```
+cd /home/pi/iSpindle-Srv
+sudo cp iSpindle.py /usr/local/bin
+sudo cp sendmail.py /usr/local/bin
+sudo chmod 755 /usr/local/bin/iSpindle.py
+sudo chmod 755 /usr/local/bin/sendmail.py
+```
 
-    cd /var/www/html    
-    sudo ln -sf /home/pi/iSpindel-Srv/web/ iSpindle
-    sudo chown -R pi:pi iSpindle/*
-    sudo chown -h pi:pi iSpindle
+Dann muss der Server als dienst registriert und gestartet werden:
+```
+sudo cp ispindle-srv.service /etc/systemd/system/
+sudo systemctl enable ispindle-srv.service
+sudo systemctl start ispindle-srv.service
+```
+
+Nun müssen die php scripte in ein Verzeichnes außerhalb des home directories kopiert werden und die Zugriffsrechte angepasst werden:
+```
+sudo cp -R /home/pi/iSpindle-Srv/ /usr/share
+sudo chown -R root:www-data /usr/share/iSpindle-Srv/*
+sudo chown -h root:www-data /usr/share/iSpindle-Srv
+sudo chmod 775 /usr/share/iSpindle-Srv/config
+```
+
+Dann muss die Webseite im Apache Server registriert werden:
+```
+cd /etc/apache2/conf-available
+sudo ln -sf /usr/share/iSpindle-Srv/config/apache.conf iSpindle.conf
+sudo a2enconf iSpindle
+sudo systemctl reload apache2
+```
 
 UTF-8 sollte in php aktiviert werden, falls das nicht bereits der Fall ist. Auf meinem system ist die php.ini hier zu finden:
 
-	cd /etc/php/7.4/apache2/
+	cd /etc/php/8.2/apache2/
 
 Das kann auf anderen System natürlich woanders unter /etc sein.
 
 Die php.ini muss hierzu editiert werden und ein ';' am Anfang der folgenden Zeilt entfernt werden, falls es dort ist:
 
-	;default_charset = "UTF-8"    ->  default_charset = "UTF-8"   
+	;default_charset = "UTF-8"`    ->  `default_charset = "UTF-8"
 
-Nun müssen noch die Rechte im config Verzeichnis angepasst werden, damit das setup script eine Konfigurationsdatei erstellen kann:
+Ausserdem die Zeitzone für php einstellen (die gleiche, die für das System gewählt wurde)
 
-	cd /home/pi/iSpindel-Srv
+	;date.timezone = -> date.timezone="Europe/Berlin" 
 
-Die Gruppe des verzeichnisses muss dem des apache Nutzers entsprechen (Beispiel: www-data)
+Für Euopa/Berlin als Beispiel
 
-	sudo chown root:www-data config
+Dann apache noch einmal starten
 
-Der Gruppe müssen für das Verzeichnis Schreibrechte erteilt werden:
-
-	sudo chmod 775 config
+	sudo systemctl restart apache2
 
 Nun kann die Webesite des Servers aufgerufen werden:
 
