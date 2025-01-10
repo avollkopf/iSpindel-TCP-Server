@@ -297,6 +297,11 @@ $document_class = get_color_scheme($conn);
     $server_not_running = get_field_from_sql($conn,$file,"server_not_running");
     $reset_flag = get_field_from_sql($conn,$file,"reset_flag");
     $diagram_selection = get_field_from_sql($conn,$file,"diagram_selection");
+    $header_device = get_field_from_sql($conn,$file,"header_device");
+    $header_batch = get_field_from_sql($conn,$file,"header_batch");
+    $header_e_g = get_field_from_sql($conn,$file,"header_e_g");
+    $header_volt = get_field_from_sql($conn,$file,"header_volt");
+    $header_hours_short = get_field_from_sql($conn,$file,"header_hours_short");
     $recipe_name = get_field_from_sql($conn,$file,"recipe_name");
     $days_history = get_field_from_sql($conn,$file,"days_history");
     $or = get_field_from_sql($conn,$file,"or");
@@ -607,7 +612,7 @@ if ($iGauge_exists != 0) {
 <div id="ResetNow" style="display: none;">
 <p><?php echo($recipe_name)?>
 <input type = "text" name = "recipename" /> </p>
-<p>Batch (e.g. 2101):
+<p><?php echo "$header_batch ($header_e_g 2101)"?>:
 <input type = "text" name = "batch" /> </p>
 
 </div>
@@ -666,18 +671,18 @@ if ($len !=0 ){
     echo "<table class='$document_class'>";
     echo "<thead>";
     echo "<tr>";
-    echo "<th>Device</th>";
+    echo "<th>$header_device</th>";
     echo "<th>$header_time</th>";
-    echo "<th>Batch</th>";
+    echo "<th>$header_batch</th>";
     echo "<th>$header_recipe</th>";
     echo "<th>$header_angle [°]</th>";
     echo "<th>$header_temperature [°C]</th>";
     echo "<th>$header_initialgravity</th>";
     echo "<th>$header_density</th>";
-    echo "<th>$header_deltagravity ($hours_ago h)</th>";
+    echo "<th>$header_deltagravity ($hours_ago $header_hours_short)</th>";
     echo "<th>$header_svg</th>";
     echo "<th>$header_alcohol</th>";
-    echo "<th>$header_battery [Volt]</th>";
+    echo "<th>$header_battery [$header_volt]</th>";
     echo "<th>$header_wifi [dB]</th>";
     echo "</tr>";
     echo "</thead>";
