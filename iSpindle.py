@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Version 4.1
+# Add more parameters for Craftbeerpi4 ispindle plugin
+#
 # Version 4.0
 # Test for bookworm with different configuration
 #
@@ -580,6 +583,11 @@ def handler(clientsock, addr):
                     'temperature': temperature,
                     'battery': battery,
                     'RSSI': rssi,
+                    'interval': interval,
+                    'gravity': gravity,
+                    'temp_units': temp_units,
+                    'ID': spindle_id,
+                    'token': user_token                   
                 }
                 out = json.dumps(outdata).encode('utf-8')
                 dbgprint(repr(addr) + ' - sending: ' + out.decode('utf-8'))
